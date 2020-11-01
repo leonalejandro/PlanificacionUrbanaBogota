@@ -1,4 +1,4 @@
-const _urlData = "/Data/alphabet.json";
+const _urlData = "/PlanificacionUrbanaBogota/Data/alphabet.json";
 
 width = 620;
 height = 500;
