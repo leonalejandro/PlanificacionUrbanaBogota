@@ -44,7 +44,7 @@ var getData = (url) => {
 var generateviz = (data) => {
 
     console.log(data);
-  x = d3.scaleBand()
+    x = d3.scaleBand()
     .domain(data.map(d => d.name))
     .range([margin.left, width - margin.right])
     .padding(0.1);
