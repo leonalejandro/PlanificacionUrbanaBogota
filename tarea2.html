@@ -25,6 +25,12 @@
 		var d3v3 = window.d3;
 		window.d3 = null;
 	</script>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script>
+		var d3v4 = window.d3;
+		window.d3 = null;
+	</script>
 	<!--<script src="/js/tarea2_readfile.js"></script>-->
 
 
@@ -83,23 +89,109 @@
 				<h2 class="mb-2">Tarea 2</h2>
 			</div>
 		</div>
+
 		
 		<div class="container">
-			<section>
-				
+
+
+		<!--
+			<section>	
 				<div class="datavizMap" id="datavizMap">
-					<!-- Initialize a select button -->
+					
 					<select id="selectButton"></select>
 					<svg></svg>
 				</div>
 			</section>
+			</br>
+			<div class = "rangelimit" id = "rangelimit">
+				<label for="nRadius">
+					radius = <span id="nRadius-value">…</span>
+		 		</label>
+				<input type="range" min="1" max="127" id="nRadius">
+			</div>
 
-			<div class="dataviz" id="dataviz">
-				<svg></svg>
+			<table class="egt">
+				<tr>
+				  <td>
+					<div class="dataviz" id="dataviz">
+						<svg></svg>
+					</div>
+				  </td>
+				  <td>
+					<div class="dataviz2" id="dataviz2">
+						<svg></svg>
+					</div>
+				  </td>
+				</tr>
+				<tr>
+				  <td>
+					<div class="datavizlin1" id="datavizlin1">
+						<svg ></svg>
+					</div>
+				  </td>
+				  <td>
+					<div class="datavizlin2" id="datavizlin2">
+						<svg></svg>
+					</div>
+				  </td>
+				</tr>
+			  </table>
+
+
+
+			  
+			-->
+
+
+			<table class="egt">
+				<tr>
+					<td>
+					  <div class="dataviz" id="dataviz">
+						  <svg></svg>
+					  </div>
+					</td>
+					<td>
+					  <div class="dataviz2" id="dataviz2">
+						  <svg></svg>
+					  </div>
+					</td>
+				  </tr>
+			</table>
+
+			<section>	
+				<div class="datavizMap" id="datavizMap">
+					
+					<select id="selectButton"></select>
+					<svg></svg>
+				</div>
+			</section>
+			</br>
+			<div class = "rangelimit" id = "rangelimit">
+				<label for="nRadius">
+					radius = <span id="nRadius-value">…</span>
+		 		</label>
+				<input type="range" min="1" max="127" id="nRadius">
 			</div>
-			<div class="dataviz2" id="dataviz2">
-				<svg></svg>
-			</div>
+
+			
+			<table class="egt2">
+				<tr>
+					<td>
+					  <div class="datavizlin1" id="datavizlin1">
+						  <svg></svg>
+					  </div>
+					</td>
+					<td>
+					  <div class="datavizlin2" id="datavizlin2">
+						  <svg></svg>
+					  </div>
+					</td>
+				</tr>
+				
+			</table>
+				
+
+
  
 			<!--Estilos-->
 			<style>
@@ -135,7 +227,33 @@
 			</style>
 
 
+
+			<style>
+				svg {
+				width: 100%;
+				height: 100%;
+				position: center;
+				}
+
+				.line:hover{
+				fill: none;
+					stroke-width: 5;
+				}
+				
+				.axis--x path {
+				fill: none;
+				display: yellow;
+				} 
+			</style>
+
+
 			<script>
+				var prefix = "/PlanificacionUrbanaBogota";
+				var url_data = prefix+"/Data/Co2_Emissions.json";
+				var url_dataLinePeak = prefix+"/Data/Co2_LineChart_TotalPeak.json";
+				var url_dataLineOPeak = prefix+"/Data/Co2_LineChart_TotalOPeak.json";
+				var urlMap = prefix+"/Data/zonas_luti.json";
+				var url_data_test = prefix+"/Data/browser_statistics.csv"
 
 				//-----------------------------------------------------------------------------------------------------------------------------------
 				//MAPA
@@ -146,6 +264,29 @@
 				var isElementSelected = false;
 				var elementSelected;
 				var cantElements = 10;
+				var selectedAnio = "0";
+				var topselected = "20";
+				var barSelected;
+
+				//COLORES A USAR EN TODA LA VISUALIZACION
+				var color_co2_tm_opeak = "#a6d96a";
+				var color_co2_tpc_opeak = "#66bd63";
+				var color_co2_car_opeak = "#1a9850";
+				var color_co2_tm_peak = "#a6d96a";
+				var color_co2_tpc_peak = "#66bd63";
+				var color_co2_car_peak = "#1a9850";
+				var color_comodin = "#FFFFFF"; //Debido a que hay categorias impares
+
+				var color_on_selection = 'orange';
+				var color_clicked_province = '#D5708B';
+				var color_selected_destination = '#8A2BFF';
+
+				var rows1;
+				var rows2;
+
+
+				//Funcion para convertir en 
+				var parseTimeLin = 	d3v4.timeParse("%y");
 
 				// Define color scale
 				var colorMap = d3v3.scale.linear()
@@ -182,29 +323,40 @@
 				.classed('dummy-text', true)
 				.attr('x', 10)
 				.attr('y', 30)
-				.style('opacity', 0);
+				.attr('stroke','black')
+				.attr('stroke-width','0.3px')
+				.style("font-size", "14pt")
+				.style('opacity', 0)
+				.style('fill', color_on_selection);
 
 				var dummyText2Map = gMap.append('text')
 				.classed('dummy-text', true)
 				.attr('x', 10)
 				.attr('y', 50)
-				.style('opacity', 0);
+				.attr('font-weight','bold')
+				.style("font-size", "14pt")
+				.style('opacity', 0)
+				.style('fill', color_on_selection);
 
 				var dummyTextMap_selected = gMap.append('text')
 				.classed('dummy-text', true)
-				.attr('x', widthMap-250)
+				.attr('x', widthMap-370)
 				.attr('y', 30)
-				.style('opacity', 0);
+				.style("font-size", "14pt")
+				.style('opacity', 0)
+				.style('fill', color_clicked_province);
 
 				var dummyTextMap_destination = gMap.append('text')
 				.classed('dummy-text', true)
-				.attr('x', widthMap-250)
+				.attr('x', widthMap-370)
 				.attr('y', heightMap-100)
-				.style('opacity', 0);
+				.style("font-size", "14pt")
+				.style('opacity', 0)
+				.style('fill', color_selected_destination);
 
 
 				// List of groups (here I have one group per column)
-    			var allGroup = ["año 1", "año 2", "año 3"];
+    			var allGroup = ["año 0", "año 1", "año 2", "año 3", "año 4", "año 5"];
 
 				//-------------------------------------------COMBOX------------------------------------------------------------
 				// add the options to the button
@@ -218,25 +370,50 @@
 
 				d3v3.select("#selectButton").on("change", function(d) {
 				// recover the option that has been chosen
-				var selectedOption = d3v3.select(this).property("value")
+				selectedAnio = d3v3.select(this).property("value")
 				// run the updateChart function with this selected option
 				
-				updateCharts(selectedOption.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
+				updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
 
 				
     			});
 
+				//-------------------------------------------SLIDER------------------------------------------------------------
+				// when the input range changes update the circle 
+				d3v3.select("#nRadius").on("input", function() {
+					update(+this.value);
+				});
+
+				// Initial starting radius of the circle 
+				update(topselected);
+
+				// update the elements
+				function update(valueslider) {
+
+					topselected = valueslider;
+					// adjust the text on the range slider
+					d3v3.select("#nRadius-value").text(valueslider);
+					d3v3.select("#nRadius").property("value", valueslider);
+
+					//SE ACTUALIZAN LOS GRAFICOS DE BARRAS
+					if(elementSelected != null){
+						updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),topselected);
+					}
+				}
 
 				//------------------------------------------------------------------------------------------------------------
 
 
 
 
-				d3v3.json("https://gist.githubusercontent.com/leonalejandro/e9d061963a65cfd4e26da33fd6df38b5/raw/b9984a536fb2cc490965ea82f327574a289c79b0/zonas_luti.json", 
+
+
+				d3v3.json(urlMap, 
 				function(err, mapData) { 
-
+					
 					var features = mapData.features;
-
+					elementSelected = features[0];
+				
 					// Update color scale domain based on data
 					colorMap.domain([0, d3v3.max(features, nameLength)]);
 
@@ -271,7 +448,7 @@
 				function mouseoverMap(d){
 					if(d!=elementSelected){
 						// Highlight hovered province
-						d3v3.select(this).style('fill', 'orange');
+						d3v3.select(this).style('fill', color_on_selection);
 						dummyTextMap.style('opacity', 1);
 						dummyText2Map.style('opacity', 1);
 						// Draw effects
@@ -307,10 +484,6 @@
 						textArtSelected(nameFn(d),upzFn(d));
 					}
 
-					
-					
-
-					
 					var x, y, k;
 
 					// Compute centroid of the selected path
@@ -329,7 +502,7 @@
 
 					// Highlight the clicked province
 					mapLayer.selectAll('path')
-						.style('fill', function(d){return centeredMap && d===centeredMap ? '#D5708B' : fillFn(d);});
+						.style('fill', function(d){return centeredMap && d===centeredMap ? color_clicked_province : fillFn(d);});
 
 						/*
 					// Zoom
@@ -338,23 +511,18 @@
 						.attr('transform', 'translate(' + widthMap / 2 + ',' + heightMap / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
 
 						*/
-
-
-
-						updateCharts(0,(d.properties.UPlCodigo).replace("UPZ","a"),10);
+						updateCharts(selectedAnio.replace("año ",""),(d.properties.UPlCodigo).replace("UPZ","a"),topselected);
 				}
 
 
 				function getElementAreaByUPZName(upz){
-					console.log(upz);
 					upz = upz.replace("a","UPZ");
-					console.log(upz);
 					var arrayMap = mapLayer.selectAll('path');
 					arrayMap.style("fill",function(d){
 						if(d.properties.UPlCodigo === upz){
 							dummyTextMap_destination.style('opacity', 1);
 							textArtDestination(nameFn(d),upzFn(d));
-							return '#8A2BE2';
+							return color_selected_destination;
 						}
 						else {
 							return fillFn(d);
@@ -375,13 +543,13 @@
 
 				function textArtSelected(text1, text2){
 					var textAux = text1+" ("+text2+")";
-					dummyTextMap_selected.text(textAux);
+					dummyTextMap_selected.html(textAux );
 				}
 
 				// Get province color
 				function fillFn(d){
 					if(d.properties.UPlCodigo === elementSelected.properties.UPlCodigo){
-						return "#D5708B";
+						return color_clicked_province;
 					}
 					//return color(nameLength(d));
 				}
@@ -393,11 +561,13 @@
 
 				//-----------------------------------------------------------------------------------------------------------------------------------
 				//GRAFICOS DE BARRAS
-				var url_data = "https://gist.githubusercontent.com/leonalejandro/7611d6f3bf05cd4624427185d10c7ecc/raw/2f680f5f36e78f8fcfb4c21f4f4d2e587e7b2934/Co2_Emissions.json";
+				
+				var graph_1_Tool_x_trans = 250;
+				var graph_2_Tool_x_trans = 750;
 
 				var margin = {top: 80, right: 20, bottom: 20, left: 50},
-					width = (960 - margin.left - margin.right),
-					height = 700 - margin.top - margin.bottom;
+					width = (960/2 - margin.left - margin.right),
+					height = 700/1.2 - margin.top - margin.bottom;
 				
 				var y = d3v3.scale.ordinal()
 					.rangeRoundBands([0, height], .3);
@@ -407,7 +577,7 @@
 				
 				var xAxis = d3v3.svg.axis()
 					.scale(x)
-					.tickFormat(d3v3.format(","))
+					.tickFormat(Math.abs)
 					.orient("top");
 				
 				var yAxis = d3v3.svg.axis()
@@ -417,109 +587,433 @@
 				
 				var color = d3v3.scale.ordinal()
 					//.range(["#d73027","#f46d43","#fdae61","#a6d96a","#66bd63","#1a9850"]);
-					.range(["#66bd63","#1a9850"]);
+					.range([color_co2_tm_opeak,color_co2_tpc_opeak,color_co2_car_opeak,color_comodin]);
 
 				function compareItems1(a, b) {
-					if (a.co2_car_peak + a.co2_tm_peak < b.co2_car_peak + b.co2_tm_peak) return 1;
-					if (b.co2_car_peak + b.co2_tm_peak < a.co2_car_peak + a.co2_tm_peak) return -1;
+					if (a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak < b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak) return 1;
+					if (b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak < a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak) return -1;
 					return 0;
 				}
 
 				function compareItems2(a, b) {
-					if (a.co2_tm_opeak + a.co2_car_opeak < b.co2_tm_opeak + b.co2_car_opeak) return 1;
-					if (b.co2_tm_opeak + b.co2_car_opeak < a.co2_tm_opeak + a.co2_car_opeak) return -1;
+					if (a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak < b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak) return 1;
+					if (b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak < a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak) return -1;
 					return 0;
 				}
 
 
+				var misDatos = [];
+				var misDatosLinePeak = [];
+				var misDatosLineOPeak = [];
+
+				function readDataBarChart(){
+					axios.get(url_data).then((response) => {
+					cont = 0;
+					for (var i = 0; i < response.data.length; i++) {
+						
+						//if(response.data[i].zi == zona && response.data[i].anio == anio){
+							var datonuevo = {};
+							datonuevo["zi"] = response.data[i].zi;
+							datonuevo["rows"] = response.data[i].zj; //ZJ
+							datonuevo["co2_tm_opeak"] = response.data[i].co2_tm_opeak;
+							datonuevo["co2_tm_peak"] = response.data[i].co2_tm_peak;
+							datonuevo["co2_car_peak"] = response.data[i].co2_car_peak;
+							datonuevo["co2_car_opeak"] = response.data[i].co2_car_opeak;
+							datonuevo["co2_tpc_peak"] = response.data[i].co2_tpc_peak;
+							datonuevo["co2_tpc_opeak"] = response.data[i].co2_tpc_opeak;
+							datonuevo["anio"] = response.data[i].anio;						
+							misDatos.push(datonuevo);
+						//}
+					}
+
+					clickedMap(elementSelected)				
+					})					
+				}
+
+				function readDataLineChart(){
+					axios.get(url_dataLinePeak).then((response) => {
+						for (var i = 0; i < response.data.length; i++) {
+							var datonuevo = {};
+							datonuevo["zi"] = response.data[i].zona;
+							datonuevo["anio"] = response.data[i].anio;
+							datonuevo["a1"] = response.data[i].a1;
+							datonuevo["a2"] = response.data[i].a2;
+							datonuevo["a3"] = response.data[i].a3;
+							datonuevo["a4"] = response.data[i].a4;
+							datonuevo["a5"] = response.data[i].a5;
+							datonuevo["a6"] = response.data[i].a6;
+							datonuevo["a7"] = response.data[i].a7;
+							datonuevo["a8"] = response.data[i].a8;
+							datonuevo["a9"] = response.data[i].a9;
+							datonuevo["a10"] = response.data[i].a10;
+							datonuevo["a11"] = response.data[i].a11;
+							datonuevo["a12"] = response.data[i].a12;
+							datonuevo["a13"] = response.data[i].a13;
+							datonuevo["a14"] = response.data[i].a14;
+							datonuevo["a15"] = response.data[i].a15;
+							datonuevo["a16"] = response.data[i].a16;
+							datonuevo["a17"] = response.data[i].a17;
+							datonuevo["a18"] = response.data[i].a18;
+							datonuevo["a19"] = response.data[i].a19;
+							datonuevo["a20"] = response.data[i].a20;
+							datonuevo["a21"] = response.data[i].a21;
+							datonuevo["a22"] = response.data[i].a22;
+							datonuevo["a23"] = response.data[i].a23;
+							datonuevo["a24"] = response.data[i].a24;
+							datonuevo["a25"] = response.data[i].a25;
+							datonuevo["a26"] = response.data[i].a26;
+							datonuevo["a27"] = response.data[i].a27;
+							datonuevo["a28"] = response.data[i].a28;
+							datonuevo["a29"] = response.data[i].a29;
+							datonuevo["a30"] = response.data[i].a30;
+							datonuevo["a31"] = response.data[i].a31;
+							datonuevo["a32"] = response.data[i].a32;
+							datonuevo["a33"] = response.data[i].a33;
+							datonuevo["a34"] = response.data[i].a34;
+							datonuevo["a35"] = response.data[i].a35;
+							datonuevo["a36"] = response.data[i].a36;
+							datonuevo["a37"] = response.data[i].a37;
+							datonuevo["a38"] = response.data[i].a38;
+							datonuevo["a39"] = response.data[i].a39;
+							datonuevo["a40"] = response.data[i].a40;
+							datonuevo["a41"] = response.data[i].a41;
+							datonuevo["a42"] = response.data[i].a42;
+							datonuevo["a43"] = response.data[i].a43;
+							datonuevo["a44"] = response.data[i].a44;
+							datonuevo["a45"] = response.data[i].a45;
+							datonuevo["a46"] = response.data[i].a46;
+							datonuevo["a47"] = response.data[i].a47;
+							datonuevo["a48"] = response.data[i].a48;
+							datonuevo["a49"] = response.data[i].a49;
+							datonuevo["a50"] = response.data[i].a50;
+							datonuevo["a51"] = response.data[i].a51;
+							datonuevo["a52"] = response.data[i].a52;
+							datonuevo["a53"] = response.data[i].a53;
+							datonuevo["a54"] = response.data[i].a54;
+							datonuevo["a55"] = response.data[i].a55;
+							datonuevo["a56"] = response.data[i].a56;
+							datonuevo["a57"] = response.data[i].a57;
+							datonuevo["a58"] = response.data[i].a58;
+							datonuevo["a59"] = response.data[i].a59;
+							datonuevo["a60"] = response.data[i].a60;
+							datonuevo["a61"] = response.data[i].a61;
+							datonuevo["a62"] = response.data[i].a62;
+							datonuevo["a63"] = response.data[i].a63;
+							datonuevo["a64"] = response.data[i].a64;
+							datonuevo["a65"] = response.data[i].a65;
+							datonuevo["a66"] = response.data[i].a66;
+							datonuevo["a67"] = response.data[i].a67;
+							datonuevo["a68"] = response.data[i].a68;
+							datonuevo["a69"] = response.data[i].a69;
+							datonuevo["a70"] = response.data[i].a70;
+							datonuevo["a71"] = response.data[i].a71;
+							datonuevo["a72"] = response.data[i].a72;
+							datonuevo["a73"] = response.data[i].a73;
+							datonuevo["a74"] = response.data[i].a74;
+							datonuevo["a75"] = response.data[i].a75;
+							datonuevo["a76"] = response.data[i].a76;
+							datonuevo["a77"] = response.data[i].a77;
+							datonuevo["a78"] = response.data[i].a78;
+							datonuevo["a79"] = response.data[i].a79;
+							datonuevo["a80"] = response.data[i].a80;
+							datonuevo["a81"] = response.data[i].a81;
+							datonuevo["a82"] = response.data[i].a82;
+							datonuevo["a83"] = response.data[i].a83;
+							datonuevo["a84"] = response.data[i].a84;
+							datonuevo["a85"] = response.data[i].a85;
+							datonuevo["a86"] = response.data[i].a86;
+							datonuevo["a87"] = response.data[i].a87;
+							datonuevo["a88"] = response.data[i].a88;
+							datonuevo["a89"] = response.data[i].a89;
+							datonuevo["a90"] = response.data[i].a90;
+							datonuevo["a91"] = response.data[i].a91;
+							datonuevo["a92"] = response.data[i].a92;
+							datonuevo["a93"] = response.data[i].a93;
+							datonuevo["a94"] = response.data[i].a94;
+							datonuevo["a95"] = response.data[i].a95;
+							datonuevo["a96"] = response.data[i].a96;
+							datonuevo["a97"] = response.data[i].a97;
+							datonuevo["a98"] = response.data[i].a98;
+							datonuevo["a99"] = response.data[i].a99;
+							datonuevo["a100"] = response.data[i].a100;
+							datonuevo["a101"] = response.data[i].a101;
+							datonuevo["a102"] = response.data[i].a102;
+							datonuevo["a103"] = response.data[i].a103;
+							datonuevo["a104"] = response.data[i].a104;
+							datonuevo["a105"] = response.data[i].a105;
+							datonuevo["a106"] = response.data[i].a106;
+							datonuevo["a107"] = response.data[i].a107;
+							datonuevo["a108"] = response.data[i].a108;
+							datonuevo["a109"] = response.data[i].a109;
+							datonuevo["a110"] = response.data[i].a110;
+							datonuevo["a111"] = response.data[i].a111;
+							datonuevo["a112"] = response.data[i].a112;
+							datonuevo["a113"] = response.data[i].a113;
+							datonuevo["a114"] = response.data[i].a114;
+							datonuevo["a115"] = response.data[i].a115;
+							datonuevo["a116"] = response.data[i].a116;
+							datonuevo["a117"] = response.data[i].a117;
+							datonuevo["a118"] = response.data[i].a118;
+							datonuevo["a119"] = response.data[i].a119;
+							datonuevo["a120"] = response.data[i].a120;
+							datonuevo["a121"] = response.data[i].a121;
+							datonuevo["a122"] = response.data[i].a122;
+							datonuevo["a123"] = response.data[i].a123;
+							datonuevo["a124"] = response.data[i].a124;
+							datonuevo["a125"] = response.data[i].a125;
+							datonuevo["a126"] = response.data[i].a126;
+							datonuevo["a127"] = response.data[i].a127;
+							misDatosLinePeak.push(datonuevo);
+						}
+					})
+
+
+					axios.get(url_dataLineOPeak).then((response) => {
+						for (var i = 0; i < response.data.length; i++) {
+							var datonuevo = {};
+							datonuevo["zi"] = response.data[i].zona;
+							datonuevo["anio"] = response.data[i].anio;
+							datonuevo["a1"] = response.data[i].a1;
+							datonuevo["a2"] = response.data[i].a2;
+							datonuevo["a3"] = response.data[i].a3;
+							datonuevo["a4"] = response.data[i].a4;
+							datonuevo["a5"] = response.data[i].a5;
+							datonuevo["a6"] = response.data[i].a6;
+							datonuevo["a7"] = response.data[i].a7;
+							datonuevo["a8"] = response.data[i].a8;
+							datonuevo["a9"] = response.data[i].a9;
+							datonuevo["a10"] = response.data[i].a10;
+							datonuevo["a11"] = response.data[i].a11;
+							datonuevo["a12"] = response.data[i].a12;
+							datonuevo["a13"] = response.data[i].a13;
+							datonuevo["a14"] = response.data[i].a14;
+							datonuevo["a15"] = response.data[i].a15;
+							datonuevo["a16"] = response.data[i].a16;
+							datonuevo["a17"] = response.data[i].a17;
+							datonuevo["a18"] = response.data[i].a18;
+							datonuevo["a19"] = response.data[i].a19;
+							datonuevo["a20"] = response.data[i].a20;
+							datonuevo["a21"] = response.data[i].a21;
+							datonuevo["a22"] = response.data[i].a22;
+							datonuevo["a23"] = response.data[i].a23;
+							datonuevo["a24"] = response.data[i].a24;
+							datonuevo["a25"] = response.data[i].a25;
+							datonuevo["a26"] = response.data[i].a26;
+							datonuevo["a27"] = response.data[i].a27;
+							datonuevo["a28"] = response.data[i].a28;
+							datonuevo["a29"] = response.data[i].a29;
+							datonuevo["a30"] = response.data[i].a30;
+							datonuevo["a31"] = response.data[i].a31;
+							datonuevo["a32"] = response.data[i].a32;
+							datonuevo["a33"] = response.data[i].a33;
+							datonuevo["a34"] = response.data[i].a34;
+							datonuevo["a35"] = response.data[i].a35;
+							datonuevo["a36"] = response.data[i].a36;
+							datonuevo["a37"] = response.data[i].a37;
+							datonuevo["a38"] = response.data[i].a38;
+							datonuevo["a39"] = response.data[i].a39;
+							datonuevo["a40"] = response.data[i].a40;
+							datonuevo["a41"] = response.data[i].a41;
+							datonuevo["a42"] = response.data[i].a42;
+							datonuevo["a43"] = response.data[i].a43;
+							datonuevo["a44"] = response.data[i].a44;
+							datonuevo["a45"] = response.data[i].a45;
+							datonuevo["a46"] = response.data[i].a46;
+							datonuevo["a47"] = response.data[i].a47;
+							datonuevo["a48"] = response.data[i].a48;
+							datonuevo["a49"] = response.data[i].a49;
+							datonuevo["a50"] = response.data[i].a50;
+							datonuevo["a51"] = response.data[i].a51;
+							datonuevo["a52"] = response.data[i].a52;
+							datonuevo["a53"] = response.data[i].a53;
+							datonuevo["a54"] = response.data[i].a54;
+							datonuevo["a55"] = response.data[i].a55;
+							datonuevo["a56"] = response.data[i].a56;
+							datonuevo["a57"] = response.data[i].a57;
+							datonuevo["a58"] = response.data[i].a58;
+							datonuevo["a59"] = response.data[i].a59;
+							datonuevo["a60"] = response.data[i].a60;
+							datonuevo["a61"] = response.data[i].a61;
+							datonuevo["a62"] = response.data[i].a62;
+							datonuevo["a63"] = response.data[i].a63;
+							datonuevo["a64"] = response.data[i].a64;
+							datonuevo["a65"] = response.data[i].a65;
+							datonuevo["a66"] = response.data[i].a66;
+							datonuevo["a67"] = response.data[i].a67;
+							datonuevo["a68"] = response.data[i].a68;
+							datonuevo["a69"] = response.data[i].a69;
+							datonuevo["a70"] = response.data[i].a70;
+							datonuevo["a71"] = response.data[i].a71;
+							datonuevo["a72"] = response.data[i].a72;
+							datonuevo["a73"] = response.data[i].a73;
+							datonuevo["a74"] = response.data[i].a74;
+							datonuevo["a75"] = response.data[i].a75;
+							datonuevo["a76"] = response.data[i].a76;
+							datonuevo["a77"] = response.data[i].a77;
+							datonuevo["a78"] = response.data[i].a78;
+							datonuevo["a79"] = response.data[i].a79;
+							datonuevo["a80"] = response.data[i].a80;
+							datonuevo["a81"] = response.data[i].a81;
+							datonuevo["a82"] = response.data[i].a82;
+							datonuevo["a83"] = response.data[i].a83;
+							datonuevo["a84"] = response.data[i].a84;
+							datonuevo["a85"] = response.data[i].a85;
+							datonuevo["a86"] = response.data[i].a86;
+							datonuevo["a87"] = response.data[i].a87;
+							datonuevo["a88"] = response.data[i].a88;
+							datonuevo["a89"] = response.data[i].a89;
+							datonuevo["a90"] = response.data[i].a90;
+							datonuevo["a91"] = response.data[i].a91;
+							datonuevo["a92"] = response.data[i].a92;
+							datonuevo["a93"] = response.data[i].a93;
+							datonuevo["a94"] = response.data[i].a94;
+							datonuevo["a95"] = response.data[i].a95;
+							datonuevo["a96"] = response.data[i].a96;
+							datonuevo["a97"] = response.data[i].a97;
+							datonuevo["a98"] = response.data[i].a98;
+							datonuevo["a99"] = response.data[i].a99;
+							datonuevo["a100"] = response.data[i].a100;
+							datonuevo["a101"] = response.data[i].a101;
+							datonuevo["a102"] = response.data[i].a102;
+							datonuevo["a103"] = response.data[i].a103;
+							datonuevo["a104"] = response.data[i].a104;
+							datonuevo["a105"] = response.data[i].a105;
+							datonuevo["a106"] = response.data[i].a106;
+							datonuevo["a107"] = response.data[i].a107;
+							datonuevo["a108"] = response.data[i].a108;
+							datonuevo["a109"] = response.data[i].a109;
+							datonuevo["a110"] = response.data[i].a110;
+							datonuevo["a111"] = response.data[i].a111;
+							datonuevo["a112"] = response.data[i].a112;
+							datonuevo["a113"] = response.data[i].a113;
+							datonuevo["a114"] = response.data[i].a114;
+							datonuevo["a115"] = response.data[i].a115;
+							datonuevo["a116"] = response.data[i].a116;
+							datonuevo["a117"] = response.data[i].a117;
+							datonuevo["a118"] = response.data[i].a118;
+							datonuevo["a119"] = response.data[i].a119;
+							datonuevo["a120"] = response.data[i].a120;
+							datonuevo["a121"] = response.data[i].a121;
+							datonuevo["a122"] = response.data[i].a122;
+							datonuevo["a123"] = response.data[i].a123;
+							datonuevo["a124"] = response.data[i].a124;
+							datonuevo["a125"] = response.data[i].a125;
+							datonuevo["a126"] = response.data[i].a126;
+							datonuevo["a127"] = response.data[i].a127;
+							misDatosLineOPeak.push(datonuevo);
+						}
+					})
+				}
+
 
 				var getData = (anio, zona, top) => {
 
-					axios.get(url_data).then((response) => {
+					var datos1 = [];
+					var datos2 = [];
+					var datos3 = [];
+					var datos4 = [];
 
-						cont = 0;
-
-						var misDatos = [];
-
-						for (var i = 0; i < response.data.length; i++) {
-							
-							if(response.data[i].zi == zona && response.data[i].anio == anio){
-								var datonuevo = {};
-								datonuevo["rows"] = response.data[i].zj;
-								datonuevo["co2_tm_opeak"] = response.data[i].co2_tm_opeak;
-								datonuevo["co2_tm_peak"] = response.data[i].co2_tm_peak;
-								datonuevo["co2_car_peak"] = response.data[i].co2_car_peak;
-								datonuevo["co2_car_opeak"] = response.data[i].co2_car_opeak;
-															
-								misDatos.push(datonuevo);
-							}
-						}
-
-						var datos1 = [];
-						var datos2 = [];
-
-						for (var i = 0 ; i<misDatos.length;i++){
+					for (var i = 0; i < misDatos.length; i++) {
+						
+						if(misDatos[i].zi == zona && misDatos[i].anio == anio){
 							var datonuevo1 = {};
 							var datonuevo2 = {};
-							
+
 							datonuevo1["rows"] = misDatos[i].rows;
 							datonuevo1["co2_tm_opeak"] = misDatos[i].co2_tm_opeak;
+							datonuevo1["co2_tpc_opeak"] = misDatos[i].co2_tpc_opeak;
 							datonuevo1["co2_car_opeak"] = misDatos[i].co2_car_opeak;
+							datonuevo1[""] = 0;
 							datos1.push(datonuevo1);
 
 							datonuevo2["rows"] = misDatos[i].rows;
 							datonuevo2["co2_tm_peak"] = misDatos[i].co2_tm_peak;
+							datonuevo2["co2_tpc_peak"] = misDatos[i].co2_tpc_peak;
 							datonuevo2["co2_car_peak"] = misDatos[i].co2_car_peak;
+							datonuevo2[""] = 0;
 							datos2.push(datonuevo2);
+
+								
 						}
+					}
+					datos1 = datos1.sort(compareItems1);
+					datos1 = datos1.slice(0,top);
+					generateviz1(datos1);
 
-						
-						datos1 = datos1.sort(compareItems2);
-						datos2 = datos2.sort(compareItems1);
-
-
-						generateviz1(datos1.slice(0,top));	
-						generateviz2(datos2.slice(0,top));					
-					})
-
+					datos2 = datos2.sort(compareItems2);	
+					datos2 = datos2.slice(0,top);				
+					generateviz2(datos2);
 
 
 
-					var data_aux = [];
-					var elem1 = {rows: "zona 1", "Not at all" : 0.0414678,"Strongly disagree":4.3254,"Disagree":0.00193076,"Agree":0.198604,"Strongly agree":0.2,"Absolutely":0.3};
-					var elem2 = {rows: "zona 2", "Not at all" : 169,"Strongly disagree":73,"Disagree":299,"Agree":836,"Strongly agree":309,"Absolutely":824};
-					var elem3 = {rows: "zona 3", "Not at all" : 435,"Strongly disagree":430,"Disagree":188,"Agree":601,"Strongly agree":619,"Absolutely":615};
-					var elem4 = {rows: "zona 4", "Not at all" : 2,"Strongly disagree":543,"Disagree":165,"Agree":252,"Strongly agree":994,"Absolutely":787};
-					var elem5 = {rows: "zona 5", "Not at all" : 970,"Strongly disagree":396,"Disagree":14,"Agree":540,"Strongly agree":794,"Absolutely":391};
-					var elem6 = {rows: "zona 6", "Not at all" : 616,"Strongly disagree":115,"Disagree":792,"Agree":947,"Strongly agree":735,"Absolutely":441};
-					var elem7 = {rows: "zona 7", "Not at all" : 339,"Strongly disagree":389,"Disagree":294,"Agree":557,"Strongly agree":494,"Absolutely":278};
-					var elem8 = {rows: "zona 8", "Not at all" : 378,"Strongly disagree":203,"Disagree":319,"Agree":842,"Strongly agree":314,"Absolutely":105};
-					var elem9 = {rows: "zona 9", "Not at all" : 789,"Strongly disagree":686,"Disagree":487,"Agree":54,"Strongly agree":396,"Absolutely":456};
-					var elem10 = {rows: "zona 10", "Not at all" : 81,"Strongly disagree":176,"Disagree":536,"Agree":392,"Strongly agree":91,"Absolutely":943};		
-					var elem11 = {rows: "zona 11", "Not at all" : 201.44,"Strongly disagree":402.2334,"Disagree":524.654,"Agree":730.665,"Strongly agree":965.666,"Absolutely":519.78};
-			
+					//Construccion de conjunto de datos para line chart
 
-					data_aux.push(elem1);
-					data_aux.push(elem2);
-					data_aux.push(elem3);
-					data_aux.push(elem4);
-					data_aux.push(elem5);
-					data_aux.push(elem6);
-					data_aux.push(elem7);
-					data_aux.push(elem8);
-					data_aux.push(elem9);
-					data_aux.push(elem10);
-					data_aux.push(elem11);
+					//Lineas 1 - opeak
+					var zonasLineChart = [];
+					for(var k = 0; k<datos1.length; k++){
+						zonasLineChart.push(datos1[k].rows);
+					}
 
-					//console.log(data_aux);
-					//generateviz(data_aux);
+					for (var i = allGroup.length -1 ; i>=0 ; i--){
+						for (var j = 0; j<misDatosLineOPeak.length; j++){
+							if (misDatosLineOPeak[j].anio == i && misDatosLineOPeak[j].zi == zona ){								
+								var datonuevo3 = {};
+								datonuevo3["Date"] =  parseTimeLin("0"+i);
+								for(var m = 0 ; m < zonasLineChart.length; m++){
+									var zoneaux = zonasLineChart[m];
+									datonuevo3[zoneaux] = misDatosLineOPeak[j][zoneaux];
+								}
+								datos3.push(datonuevo3);	
+								break;
+							}
+						}
+					}
+
+					var columns_l1 = ["Date"];
+					for( var n = 0 ; n < zonasLineChart.length; n++){
+						columns_l1.push(zonasLineChart[n]);
+					}
+
+					datos3["columns"] = columns_l1;				
+					generatevizLin1(datos3);
+
+
+					//Lineas 2 -  peak
+
+					var zonasLineChart2 = [];
+					for(var k = 0; k<datos2.length; k++){
+						zonasLineChart2.push(datos2[k].rows);
+					}
+
+					for (var i = allGroup.length -1 ; i>=0 ; i--){
+						for (var j = 0; j<misDatosLinePeak.length; j++){
+							if (misDatosLinePeak[j].anio == i && misDatosLinePeak[j].zi == zona ){								
+								var datonuevo4 = {};
+								datonuevo4["Date"] =  parseTimeLin("0"+i);
+								for(var m = 0 ; m < zonasLineChart2.length; m++){
+									var zoneaux = zonasLineChart2[m];
+									datonuevo4[zoneaux] = misDatosLinePeak[j][zoneaux];
+								}
+								datos4.push(datonuevo4);	
+								break;
+							}
+						}
+					}
+
+					var columns_l2 = ["Date"];
+					for( var n = 0 ; n < zonasLineChart2.length; n++){
+						columns_l2.push(zonasLineChart2[n]);
+					}
+
+					datos4["columns"] = columns_l2;				
+					generatevizLin2(datos4);
+
 				}
 
 
 
 
 				var generateviz1 = (data) => {
-
 
 				  d3v3.select("#dataviz > svg").remove(); 
 
@@ -560,37 +1054,54 @@
 					.append('div')
 					.attr("class", "tooltip")
 					.style('position', 'absolute')
-					.style('background-color', 'rgba(255,255,255,0.8)')
+					.style('background-color', 'rgba(250,250,250,1.0)')
 					.style('border-radius', '5px')
 					.style('padding', '5px')
 					.style('opacity', 0)
 					.style("font-family", "Tahoma, Geneva, sans-serif")
-					.style("font-size", "12pt");
+					.style("font-size", "11pt");
 					
-					function mouseover(){
-						d3v3.select(this).select('rect').style('opacity', '0.5');
-						Tooltip
-						.style('opacity', 1)
-						.style('box-shadow', '5px 5px 5px rgba(0,0,0,0.2)');
+				function mouseover(){
+					d3v3.select(this).selectAll('rect').style('opacity', '0.5');
+					Tooltip
+					.style('opacity', 1)
+					.style('box-shadow', '5px 5px 5px rgba(0,0,0,0.6)');
+				}
 
+				function mousemove(){
+					var d = d3v3.select(this).data()[0]
+					Tooltip
+					.html('<b>co2_tm_opeak:</b> <font color="' + color_co2_tm_opeak +'">' + d.co2_tm_opeak + '</font> </br>' + 
+						'<b>co2_tpc_opeak:</b> <font color="' + color_co2_tpc_opeak +'">' + d.co2_tpc_opeak +'</font> </br>' +
+						'<b>co2_car_opeak:</b> <font color="'+ color_co2_car_opeak +'">'+ d.co2_car_opeak+'</font>')
+					.style("left", ((d3v3.mouse(this)[0]) + graph_1_Tool_x_trans) + "px")
+					.style("top", (d3v3.event.pageY-630) + "px");
+
+				}
+				function mouseout(){
+					if ((d3v3.select(this).data()[0]).rows != ( barSelected!=null ? barSelected.rows:"0")){
+						d3v3.select(this).selectAll('rect').style('opacity', '1');
+						
 					}
-					function mousemove(){
-						var d = d3v3.select(this).data()[0]
-						Tooltip
-						.html('Year ' + d.absolute + ': ' + d.absolute)
-						.style("left", (d3v3.mouse(this)[0]+30) + "px")
-						.style("top", (d3v3.event.pageY-580) + "px");
-						//console.log(d3v3.event.pageY);
-					}
-					function mouseout(){
-						d3v3.select(this).select('rect').style('opacity', '1');
-						Tooltip.style("opacity", 0);
-					}
+					Tooltip.style("opacity", 0);
+					
+				}
 
 				// When clicked, zoom in
 				function clickedBar1() {
-					var d = d3v3.select(this).data()[0];
-					getElementAreaByUPZName(d.rows);
+
+					if( barSelected == null ||  (d3v3.select(this).data()[0]).rows != barSelected.rows){
+						
+						var d = d3v3.select(this).data()[0];
+						if(barSelected != null){
+							rows1.selectAll("rect").style('opacity', function(d2){return '1'});
+							rows2.selectAll("rect").style('opacity', function(d2){return '1'});
+						}
+						barSelected = d3v3.select(this).data()[0];
+						getElementAreaByUPZName(d.rows);
+						d3v3.select(this).selectAll('rect').style('opacity', '0.5');
+					}
+					
 				}
 				
 				  x.domain([min, max]).nice();
@@ -604,7 +1115,7 @@
 					 .attr("class", "y axis")
 					 .call(yAxis);
 				
-				  var rows = svg.selectAll(".row")
+				  rows1 = svg.selectAll(".row")
 					  .data(data)
 					  .enter().append("g")
 					  .attr("class", "bar")
@@ -614,35 +1125,14 @@
         			  .on('mousemove', mousemove)
 					  .on('mouseout', mouseout)
 					  .on('click', clickedBar1)
-					 
-					 
-					 
-					  /*.on("mouseover", function(d) {
-						svg.selectAll('.y').selectAll('text').filter(function(text) { return text===d.rows; })
-							.transition().duration(100).style('font','15px sans-serif');
-						
-						
-
-
-
-					  })
-					  .on("mouseout", function(d) {
-						svg.selectAll('.y').selectAll('text').filter(function(text) { return text===d.rows; })
-							.transition().duration(100).style('font','10px sans-serif');
-
-						
-						
-					  })*/;
+					  ;
 				
-				  var bars = rows.selectAll("rect")
+				  var bars = rows1.selectAll("rect")
 					.data(function(d) { return d.boxes; })
 					.enter().append("g").attr("class", "barra")
 					//.on('mouseover', mouseover)
         			//.on('mousemove', mousemove)
         			//.on('mouseout', mouseout);
-				
-
-
 					  
 				  bars.append("rect")
 					  .attr("height", y.rangeBand())
@@ -658,7 +1148,6 @@
 					.style("text-anchor", "begin")
 					.text(function(d) { return d.absolute !== 0 && (d.x1-d.x0)>0.04 ? d.absolute : "" });
 				*/
-
 				  svg.append("g")
 					  .attr("class", "y axis")
 					.append("line")
@@ -684,14 +1173,7 @@
 						.attr("dy", ".35em")
 						.style("text-anchor", "begin")
 						.text(function(d) { return d; });
-				
 				};
-
-
-
-
-
-
 
 
 				var generateviz2 = (data) => {
@@ -727,6 +1209,64 @@
 				  var min = d3v3.min(data, function(d) { return d.boxes["0"].x0; });
 				  var max = d3v3.max(data, function(d) { return d.boxes[d.boxes.length-1].x1; });
 				
+
+				  // tooltips
+
+				//Create a tooltip
+				var Tooltip = d3v3.select('#dataviz2')
+					.append('div')
+					.attr("class", "tooltip")
+					.style('position', 'absolute')
+					.style('background-color', 'rgba(250,250,250,1.0)')
+					.style('border-radius', '5px')
+					.style('padding', '5px')
+					.style('opacity', 0)
+					.style("font-family", "Tahoma, Geneva, sans-serif")
+					.style("font-size", "11pt");
+					
+				function mouseover(){
+					d3v3.select(this).selectAll('rect').style('opacity', '0.1');
+					Tooltip
+					.style('opacity', 1)
+					.style('box-shadow', '5px 5px 5px rgba(0,0,0,0.6)');
+				}
+
+				function mousemove(){
+					var d = d3v3.select(this).data()[0]
+					Tooltip
+					.html('<b>co2_tm_peak:</b> <font color="' + color_co2_tm_peak +'">' + d.co2_tm_peak + '</font> </br>' + 
+						'<b>co2_tpc_peak:</b> <font color="' + color_co2_tpc_peak +'">' + d.co2_tpc_peak +'</font> </br>' +
+						'<b>co2_car_peak:</b> <font color="'+ color_co2_car_peak +'">'+ d.co2_car_peak+'</font>')
+					.style("left", ((d3v3.mouse(this)[0]) + graph_2_Tool_x_trans) + "px")
+					.style("top", (d3v3.event.pageY-630) + "px");
+
+				}
+				function mouseout(){
+
+					if ((d3v3.select(this).data()[0]).rows != ( barSelected!=null ? barSelected.rows:"0")){
+						d3v3.select(this).selectAll('rect').style('opacity', '1');
+						
+					}
+					Tooltip.style("opacity", 0);
+
+				}
+
+				// When clicked, zoom in
+				function clickedBar1() {
+					if( barSelected == null ||  (d3v3.select(this).data()[0]).rows != barSelected.rows){
+						
+						var d = d3v3.select(this).data()[0];
+						if(barSelected != null){
+							rows2.selectAll("rect").style('opacity', function(d2){return '1'});
+							rows1.selectAll("rect").style('opacity', function(d2){return '1'});
+							
+						}
+						barSelected = d3v3.select(this).data()[0];
+						getElementAreaByUPZName(d.rows);
+						d3v3.select(this).selectAll('rect').style('opacity', '0.5');
+					}
+				}
+
 				  x.domain([min, max]).nice();
 				  y.domain(rowsNames);
 				
@@ -738,30 +1278,24 @@
 					 .attr("class", "y axis")
 					 .call(yAxis);
 				
-				  var rows = svg2.selectAll(".row")
+				  rows2 = svg2.selectAll(".row")
 					  .data(data)
-					.enter().append("g")
+					  .enter().append("g")
 					  .attr("class", "bar")
 					  .attr("transform", function(d) { return "translate(0," + y(d.rows) + ")"; })
-					  .on("mouseover", function(d) {
-						svg2.selectAll('.y').selectAll('text').filter(function(text) { return text===d.rows; })
-							.transition().duration(100).style('font','15px sans-serif');
-					  })
-					  .on("mouseout", function(d) {
-						svg2.selectAll('.y').selectAll('text').filter(function(text) { return text===d.rows; })
-							.transition().duration(100).style('font','10px sans-serif');
-					  });
+					  
+					  .on('mouseover', mouseover)
+        			  .on('mousemove', mousemove)
+					  .on('mouseout', mouseout)
+					  .on('click', clickedBar1);
 				
-				var bars = rows.selectAll("rect")
+				var bars = rows2.selectAll("rect")
 					  .data(function(d) { return d.boxes; })
 					  .enter().append("g").attr("class", "barra")
-					  .on("mouseover", function(d) {
-						d3v3.select(this).select('rect').style('opacity', '0.5');
-					   })
-					  .on("mouseout", function(d) {
-						d3v3.select(this).select('rect').style('opacity', '1');
-					  });
-				
+					  //.on('mouseover', mouseover)
+        			  //.on('mousemove', mousemove)
+        			  //.on('mouseout', mouseout);;
+
 				  bars.append("rect")
 					  .attr("height", y.rangeBand())
 					  .attr("x", function(d) { return x(d.x0); })
@@ -806,8 +1340,220 @@
 				
 				};
 
+				//-----------------------------------------------------------------------------------------------------------------------------------
+				//GRAFICOS DE LINEAS
 				
-				getData(0,"a4",10);
+
+
+				var marginLin = {top: 30, right: 60, bottom: 50, left: 60};
+				var widthLin = 960/2 - marginLin.left - marginLin.right;
+				var heightLin = 500 - marginLin.top - marginLin.bottom;
+				
+				var colorLin = d3v4.scaleOrdinal(d3v4.schemeCategory10);
+
+
+
+				var xRangelin = d3v4.scaleTime()
+        		.rangeRound([0, widthLin]);
+
+				var yRangelin = d3v4.scaleLinear()
+					.range([heightLin, 0]);
+
+				var line = d3v4.line()
+					.x(function(d) { return xRangelin(d.Date);  })
+					.y(function(d) { return yRangelin(d.co2);  })
+					//.curve(d3v4.curveMonotoneX)
+					;
+
+				var generatevizLin1 = (data) => {
+					d3v4.select("#datavizlin1 > svg").remove(); 
+
+					var glin1 = d3v4.select("#datavizlin1")
+					.append("svg")
+					.attr("height", 500)
+					.attr("width", 960/2)
+					.append("g")
+					.attr("transform", "translate(" + marginLin.left + "," + marginLin.top + ")");
+
+					var browsers = data.columns.slice(1).map(function(id) {
+					return {
+					id: id,
+					values: data.map(function(d) {
+					return {Date: d.Date, co2: d[id]};
+					})
+					};     
+					});
+
+					xRangelin.domain(d3v4.extent(data, function(d) { return d.Date; }));
+
+					yRangelin.domain([
+						d3v4.min(browsers, function(c) { return d3v4.min(c.values, function(d) { return d.co2; }); }),
+						d3v4.max(browsers, function(c) { return d3v4.max(c.values, function(d) { return d.co2; }); })
+					]);
+
+					colorLin.domain(browsers.map(function(c) { return c.id; }));
+
+					glin1.append("g")
+						.attr("class", "axis")
+						.attr("transform", "translate(0," + heightLin + ")")
+						.call(d3v4.axisBottom(xRangelin).tickFormat(d3v4.timeFormat("%y")))
+						.style("text-anchor", "middle")
+						.attr("dx", "-.1em");
+
+					glin1.append("g")
+						.attr("class", "axis")
+						.call(d3v4.axisLeft(yRangelin))
+						.append("text")
+						.attr("x",2)
+						.attr("y", 6)
+						.attr("dy", "0.71em")
+						.attr("fill", "#000")
+						.attr("text-anchor", "start")
+						.text("CO2, %");
+
+					var browser = glin1.selectAll(".browsers")
+						.data(browsers)
+						.enter()
+						.append("g")
+						.attr("class", "browser");
+
+					browser.append("path")
+						.style("fill", "none")
+						.attr("class", "line")
+						.attr("d", function(d) { return line(d.values); })
+						.style("stroke", function(d) { return colorLin(d.id); })
+						.on('mouseover', mouseoverLine)
+						.on('click', clickLine)
+						;
+						
+					browser.append("text")
+						.datum(function(d) { return {id: d.id, value: d.values[0]}; })
+						.attr("transform", function(d) { return "translate(" + xRangelin(d.value.Date) + "," + yRangelin(d.value.co2) + ")"; })
+						.attr("x", 3)
+						.attr("dy", "0.35em")
+						.style("font", "10px sans-serif")
+						.text(function(d) { return d.id; });
+
+
+					function mouseoverLine(d){
+						console.log(d);		
+					}
+
+					function clickLine(d){
+						if (d3v4.event.ctrlKey) {
+							for(var i = 0; i<data.length; i++){
+								delete data[i][d.id];
+							}
+							const index = data["columns"].indexOf(d.id);
+							if (index > -1) {
+								data["columns"].splice(index, 1);
+							}
+							generatevizLin1(data);
+						}
+						
+					}
+				}
+
+
+
+				var generatevizLin2 = (data) => {
+					d3v4.select("#datavizlin2 > svg").remove(); 
+
+					var glin1 = d3v4.select("#datavizlin2")
+					.append("svg")
+					.attr("height", 500)
+					.attr("width", 960/2)
+					.append("g")
+					.attr("transform", "translate(" + marginLin.left + "," + marginLin.top + ")");
+
+					var browsers = data.columns.slice(1).map(function(id) {
+					return {
+					id: id,
+					values: data.map(function(d) {
+					return {Date: d.Date, co2: d[id]};
+					})
+					};     
+					});
+
+					xRangelin.domain(d3v4.extent(data, function(d) { return d.Date; }));
+
+					yRangelin.domain([
+						d3v4.min(browsers, function(c) { return d3v4.min(c.values, function(d) { return d.co2; }); }),
+						d3v4.max(browsers, function(c) { return d3v4.max(c.values, function(d) { return d.co2; }); })
+					]);
+
+					colorLin.domain(browsers.map(function(c) { return c.id; }));
+
+					glin1.append("g")
+						.attr("class", "axis")
+						.attr("transform", "translate(0," + heightLin + ")")
+						.call(d3v4.axisBottom(xRangelin).tickFormat(d3v4.timeFormat("%y")))
+						.style("text-anchor", "middle")
+						.attr("dx", "-.1em");
+
+					glin1.append("g")
+						.attr("class", "axis")
+						.call(d3v4.axisLeft(yRangelin))
+						.append("text")
+						.attr("x",2)
+						.attr("y", 6)
+						.attr("dy", "0.71em")
+						.attr("fill", "#000")
+						.attr("text-anchor", "start")
+						.text("CO2, %");
+
+					var browser = glin1.selectAll(".browsers")
+						.data(browsers)
+						.enter()
+						.append("g")
+						.attr("class", "browser");
+
+					browser.append("path")
+						.style("fill", "none")
+						.attr("class", "line")
+						.attr("d", function(d) { return line(d.values); })
+						.style("stroke", function(d) { return colorLin(d.id); })
+						.on('mouseover', mouseoverLine)
+						.on('click', clickLine);
+						
+					browser.append("text")
+						.datum(function(d) { return {id: d.id, value: d.values[0]}; })
+						.attr("transform", function(d) { return "translate(" + xRangelin(d.value.Date) + "," + yRangelin(d.value.co2) + ")"; })
+						.attr("x", 3)
+						.attr("dy", "0.35em")
+						.style("font", "10px sans-serif")
+						.text(function(d) { return d.id; });
+
+					
+					function mouseoverLine(d){
+						console.log(d);		
+					}
+
+					function clickLine(d){
+
+						if (d3v4.event.ctrlKey) {
+							for(var i = 0; i<data.length; i++){
+								delete data[i][d.id];
+							}
+
+							const index = data["columns"].indexOf(d.id);
+							if (index > -1) {
+								data["columns"].splice(index, 1);
+							}
+							generatevizLin2(data);
+						}
+						
+					}
+				}
+
+
+
+
+				//-----------------------------------------------------------------------------------------------------------------------------------
+				//Se leen los datos y se hace la visualizacion inicial 
+				readDataBarChart()
+				readDataLineChart()
+				
 				</script>
 
 
