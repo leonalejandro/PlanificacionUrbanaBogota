@@ -20,6 +20,7 @@
 
 
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	
 	<script src="https://d3js.org/d3.v3.min.js"></script>
 	<script>
 		var d3v3 = window.d3;
@@ -31,6 +32,13 @@
 		var d3v4 = window.d3;
 		window.d3 = null;
 	</script>
+
+	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script>
+		var d3v6 = window.d3;
+		window.d3 = null;
+	</script>
+
 	<!--<script src="/js/tarea2_readfile.js"></script>-->
 
 
@@ -64,7 +72,6 @@
 					<li class="nav-item"><a href="tarea1.html" class="nav-link">Tarea 1</a></li>
 					<li class="nav-item active"><a href="tarea2.html" class="nav-link">Tarea 2</a></li>
 					<li class="nav-item"><a href="tarea3.html" class="nav-link">Tarea 3</a></li>
-					<li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
 				</ul>
 			</div>
 		</div>
@@ -76,8 +83,8 @@
 		<div class="container">
 			<div class="row no-gutters slider-text js-fullheight align-items-end">
 				<div class="col-md-9 ftco-animate pb-5 mb-5">
-					<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Tarea 2 <i class="fa fa-chevron-right"></i></span></p>
-					<h1 class="mb-3 bread">Tarea 2</h1>
+					<p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>EMISIONES ANUALES DE CO2<i class="fa fa-chevron-right"></i></span></p>
+					<h1 class="mb-3 bread">EMISIONES ANUALES DE CO2</h1>
 				</div>
 			</div>
 		</div>
@@ -86,64 +93,42 @@
 	<section class="ftco-section ftco-portfolio">
 		<div class="row justify-content-center no-gutters">
 			<div class="col-md-12 heading-section text-center ftco-animate mb-5">
-				<h2 class="mb-2">Tarea 2</h2>
+				<h2 class="mb-2">EMISIONES ANUALES DE CO2</h2>
 			</div>
-		</div>
-
+		</div>		
 		
 		<div class="container">
 
-
-		<!--
-			<section>	
-				<div class="datavizMap" id="datavizMap">
-					
-					<select id="selectButton"></select>
-					<svg></svg>
+			<div width=100%>
+				<div class="text text-md-center">
+					<h2>Emisiones de CO2 desde zona seleccionada hacia las demás</h2>
+					<p style="font-size:20px">A continuación, se muestran las emisiones que hay en total (transporte publico + transporte privado) desde la zona y año seleccionado hacia las demás zonas. Es posible ordenar los datos tanto ascendente como descendentemente, con el fin de observar y analizar los mínimos y máximos.</p>
+					<p style="font-size:15px">Puede seleccionar la barra que desee y observar en el mapa a que zona pertenece de acuerdo a su color. Igualmente puede observar el valor en barra, pasando el mouse sobre cada conjunto de barras. Hay un punto central, hacia la derecha se muestran las emisiones de CO2 generadas por transporte privado, mientras que a la izquierda se muestran las emisiones generadas por transporte público</p>
 				</div>
-			</section>
-			</br>
-			<div class = "rangelimit" id = "rangelimit">
-				<label for="nRadius">
-					radius = <span id="nRadius-value">…</span>
-		 		</label>
-				<input type="range" min="1" max="127" id="nRadius">
 			</div>
 
-			<table class="egt">
-				<tr>
-				  <td>
-					<div class="dataviz" id="dataviz">
-						<svg></svg>
-					</div>
-				  </td>
-				  <td>
-					<div class="dataviz2" id="dataviz2">
-						<svg></svg>
-					</div>
-				  </td>
-				</tr>
-				<tr>
-				  <td>
-					<div class="datavizlin1" id="datavizlin1">
-						<svg ></svg>
-					</div>
-				  </td>
-				  <td>
-					<div class="datavizlin2" id="datavizlin2">
-						<svg></svg>
-					</div>
-				  </td>
-				</tr>
-			  </table>
-
-
-
-			  
-			-->
-
+			<section>
+				<div align ="center">
+					<select id="selectButtonOrdenamiento" class="textmenus"></select>
+				</div>
+			</section>
+			
+			<br></br>
+			<br></br>
 
 			<table class="egt">
+				<tr>
+					<td>
+						<div>
+							<p style="font-size:15px ; color:black; text-align:center;"><b>EMISIONES DE CO2 TOTALES POR ZONA EN HORA VALLE</b></p>
+						</div>
+					</td>
+					<td>
+						<div>
+							<p style="font-size:15px ; color:black; text-align:center;"><b>EMISIONES DE CO2 TOTALES POR ZONA EN HORA PICO</b></p>
+						</div>
+					</td>
+				</tr>
 				<tr>
 					<td>
 					  <div class="dataviz" id="dataviz">
@@ -158,23 +143,64 @@
 				  </tr>
 			</table>
 
+			<div width=100%>
+				<div class="text text-md-center">
+					<h2>Mapa de las UPZ (Unidad de Planeamiento Zonal) de la ciudad de Bogotá</h2>
+					<p style="font-size:20px">A continuación, se muestran el mapa de Bogotá al cual se le aplicó una escala de color verde para determinar el nivel de emisiones de CO2 promedio en cada zona.</p>
+					<p style="font-size:15px">Al pasar el mouse sobre las diferentes zonas, podrá ver en la esquina superior izquierda el nombre y número de esa zona.
+						Al seleccionar una zona ya sea en el mapa, o en el combo box de zonas, podrá ver la información de dicha zona seleccionada en la esquina superior derecha.
+						Para ver la información de las zonas seleccionadas en las gráficas de barras puede observar la esquina inferior derecha.
+						Para ver la información de las zonas seleccionadas en las gráficas de líneas puede observar la esquina inferior izquierda.
+						En todos los casos, cada zona seleccionada tendrá un color diferente.
+					</p>
+				</div>
+			</div>
+
+
 			<section>	
 				<div class="datavizMap" id="datavizMap">
 					
-					<select id="selectButton"></select>
+					<select id="selectButton" class="textmenus"></select>
+					<select id="selectButtonHora" class="textmenus"></select>
+					<select id="selectButtonZonas" class="textmenus" style="float: right;"></select>
 					<svg></svg>
 				</div>
 			</section>
+
+
 			</br>
+
+
 			<div class = "rangelimit" id = "rangelimit">
-				<label for="nRadius">
-					radius = <span id="nRadius-value">…</span>
+				<label for="nRadius"  class="textmenus">
+					Límite de zonas = <span id="nRadius-value">…</span>
 		 		</label>
-				<input type="range" min="1" max="127" id="nRadius">
+				<input type="range" min="01" max="127" id="nRadius">
 			</div>
 
-			
+	
+
+			<div width=100%>
+				<div class="text text-md-center">
+					<h2>Cambios anuales en la cantidad de emisiones de CO2</h2>
+					<p style="font-size:20px">A continuación, se muestran los cambios que hay por año, en las cantidades de emisión de CO2 (en Toneladas) de las diferentes zonas destino. Estas zonas son las mismas que aparecen en el gráfico de barras de la parte superior.</p>
+					<p style="font-size:15px">Puede seleccionar la línea que desee y observar en el mapa a que zona pertenece de acuerdo a su color. Igualmente puede observar el valor en cada año para cada zona, pasando el mouse sobre los puntos. Si desea eliminar una línea para analizar mejor las tendencias puede presionar la tecla “Control + click” (Ctrl+Click) sobre la linea.</p>
+				</div>
+			</div>
+
 			<table class="egt2">
+				<tr>
+					<td>
+						<div>
+							<p style="font-size:15px ; color:black; text-align:center;"><b>CAMBIOS POR AÑOS EN HORA VALLE </b></p>
+						</div>
+					</td>
+					<td>
+						<div>
+							<p style="font-size:15px ; color:black; text-align:center;"><b>CAMBIOS POR AÑOS EN HORA PICO </b></p>
+						</div>
+					</td>
+				</tr>
 				<tr>
 					<td>
 					  <div class="datavizlin1" id="datavizlin1">
@@ -237,7 +263,7 @@
 
 				.line:hover{
 				fill: none;
-					stroke-width: 5;
+					stroke-width: 6;
 				}
 				
 				.axis--x path {
@@ -245,6 +271,30 @@
 				display: yellow;
 				} 
 			</style>
+
+			<style>
+				.textmenus{
+					font-size: 20px;
+				}
+			</style>
+
+			<!--ESTILO DEL TOOLTIP DE PUNTOS-->
+			<style>
+				div.tooltip2 {	
+					position: absolute;			
+					text-align: center;			
+					width: 70px;					
+					height: 38px;					
+					padding: 2px;				
+					font: 12px sans-serif;	
+					color: black;	
+					background: lightsteelblue;	
+					border: 1px;		
+					border-radius: 8px;			
+					pointer-events: none;			
+				}
+			</style>
+
 
 
 			<script>
@@ -261,12 +311,16 @@
 				heightMap = 500,
 				centeredMap;
 
+				var isLineSelected = false;
 				var isElementSelected = false;
+				var lineSelected;
 				var elementSelected;
 				var cantElements = 10;
 				var selectedAnio = "0";
-				var topselected = "20";
+				var topselected = "10";
 				var barSelected;
+				var ordenamiento = "DES"; //DES - descendiente ; ASC - Ascendente
+				var selectedHora = "hora pico";
 
 				//COLORES A USAR EN TODA LA VISUALIZACION
 				var color_co2_tm_opeak = "#a6d96a";
@@ -276,6 +330,7 @@
 				var color_co2_tpc_peak = "#66bd63";
 				var color_co2_car_peak = "#1a9850";
 				var color_comodin = "#FFFFFF"; //Debido a que hay categorias impares
+				
 
 				var color_on_selection = 'orange';
 				var color_clicked_province = '#D5708B';
@@ -355,10 +410,158 @@
 				.style('fill', color_selected_destination);
 
 
-				// List of groups (here I have one group per column)
-    			var allGroup = ["año 0", "año 1", "año 2", "año 3", "año 4", "año 5"];
+				var dummyTextMap_destination_line = gMap.append('text')
+				.classed('dummy-text', true)
+				.attr('x', 10)
+				.attr('y', heightMap-100)
+				.style("font-size", "14pt")
+				.style('opacity', 0);
 
-				//-------------------------------------------COMBOX------------------------------------------------------------
+
+				// List of groups (here I have one group per column)
+				var allGroupOrdenamiento = ["Descendente","Ascendente"];
+    			var allGroup = ["año 0", "año 1", "año 2", "año 3", "año 4", "año 5"];
+				var allHoras = ["hora pico","hora valle"];
+				var allGroupZonas = ["UPZ 22 - 12 de Octubre",
+									"UPZ 34 - 20 de Julio",
+									"UPZ 117 - Aeropuerto Eldorado",
+									"UPZ 116 - Álamos",
+									"UPZ 59 - Alfonso López",
+									"UPZ 44 - Américas",
+									"UPZ 49 - Apogeo",
+									"UPZ 65 - Arborizadora",
+									"UPZ 113 - Bavaria",
+									"UPZ 72 - Bolivia",
+									"UPZ 85 - Bosa Central",
+									"UPZ 84 - Bosa Occidental",
+									"UPZ 30 - Boyacá Real",
+									"UPZ 18 - Britalia",
+									"UPZ 79 - Calandaima",
+									"UPZ 115 - Capellanía",
+									"UPZ 45 - Carvajal",
+									"UPZ 23 - Casablanca SUba",
+									"UPZ 46 - Castilla",
+									"UPZ 99 - Chapinero",
+									"UPZ 97 - Chicó Lago",
+									"UPZ 35 - Ciudad Jardín",
+									"UPZ 40 - Ciudad Montes",
+									"UPZ 110 - Ciudad Salitre Occidente",
+									"UPZ 109 - Ciudad Salitre Oriental",
+									"UPZ 61 - Ciudad Usme",
+									"UPZ 58 - Comuneros",
+									"UPZ 80 - Corabastos",
+									"UPZ 15 - Country Club",
+									"UPZ 56 - Danubio",
+									"UPZ 55 - Diana Turbay",
+									"UPZ 63 - El Mochuelo",
+									"UPZ 86 - El Porvenir",
+									"UPZ 19 - El Prado",
+									"UPZ 88 - El Refugio",
+									"UPZ 28 - El Rincón",
+									"UPZ 68 - El Tesoro",
+									"UPZ 74 - Engativá",
+									"UPZ 75 - Fontibón",
+									"UPZ 76 - Fontibón-San Pablo",
+									"UPZ 100 - Galerías",
+									"UPZ 73 - Garcés Navas",
+									"UPZ 81 - Gran Britalia",
+									"UPZ 57 - Gran Yomasa",
+									"UPZ 112 - Granjas de Techo",
+									"UPZ 3 - Guaymaral",
+									"UPZ 69 - Ismael Perdomo",
+									"UPZ 105 - Jardín Botánico",
+									"UPZ 70 - Jerusalén",
+									"UPZ 47 - Kennedy Central",
+									"UPZ 2 - La Academia",
+									"UPZ 20 - La Alhambra",
+									"UPZ 94 - La Candelaria",
+									"UPZ 106 - La Esmeralda",
+									"UPZ 52 - La Flora",
+									"UPZ 25 - La Floresta",
+									"UPZ 50 - La Gloria",
+									"UPZ 92 - La Macarena",
+									"UPZ 102 - La Sabana",
+									"UPZ 10 - La Uribe",
+									"UPZ 95 - Las Cruces",
+									"UPZ 26 - Las Ferias",
+									"UPZ 83 - Las Margaritas",
+									"UPZ 93 - Las Nieves",
+									"UPZ 98 - Los Alcázares",
+									"UPZ 21 - Los Andes",
+									"UPZ 13 - Los Cedros",
+									"UPZ 51 - Los Libertadores",
+									"UPZ 96 - Lourdes",
+									"UPZ 67 - Lucero",
+									"UPZ 53 - Marco Fidel Suárez",
+									"UPZ 54 - Marruecos",
+									"UPZ 29 - Minuto de Dios",
+									"UPZ 114 - Modelia",
+									"UPZ 64 - Monteblanco",
+									"UPZ 41 - Muzú",
+									"UPZ 24 - Niza",
+									"UPZ 90 - Pardo Rubio",
+									"UPZ 60 - Parque Entrenubes",
+									"UPZ 103 - Parque Salitre",
+									"UPZ 104 - Parque Simón Bolívar",
+									"UPZ 1 - Paseo de los Libertadores",
+									"UPZ 82 - Patio Bonito",
+									"UPZ 111 - Puente Aranda",
+									"UPZ 107 - Quinta Paredes",
+									"UPZ 39 - Quiroga",
+									"UPZ 38 - Restrepo",
+									"UPZ 91 - Sagrado Corazón",
+									"UPZ 32 - San Blas",
+									"UPZ 11 - San Cristóbal Norte",
+									"UPZ 66 - San Francisco",
+									"UPZ 89 - San Isidro-Patios",
+									"UPZ 36 - San José",
+									"UPZ 17 - San José de Bavaria",
+									"UPZ 43 - San Rafael",
+									"UPZ 16 - Santa Bárbara",
+									"UPZ 31 - Santa Cecilia",
+									"UPZ 37 - Santa Isabel",
+									"UPZ 33 - Sociego",
+									"UPZ 27 - Suba",
+									"UPZ 101 - Teusaquillo",
+									"UPZ 71 - Tibabuyes",
+									"UPZ 48 - Timiza",
+									"UPZ 78 - Tintal Norte",
+									"UPZ 87 - Tintal Sur",
+									"UPZ 12 - Toberín",
+									"UPZ 62 - Tunjuelito",
+									"UPZ 14 - Usaquén",
+									"UPZ 42 - Venecia",
+									"UPZ 9 - Verbenal",
+									"UPZ 77 - Zona Franca",
+									"UPZ 108 - Zona Industrial"];
+
+				//-------------------------------------------COMBO ordenamiento------------------------------------------------------------
+
+				d3v3.select("#selectButtonOrdenamiento")
+				.selectAll('myOptions')
+					.data(allGroupOrdenamiento)
+				.enter()
+					.append('option')
+				.text(function (d) { return d; }) // text showed in the menu
+				.attr("value", function (d) { return d; });
+
+				d3v3.select("#selectButtonOrdenamiento").on("change", function(d) {
+					
+					if (d3v3.select(this).property("value").toUpperCase() === "ASCENDENTE"){
+						ordenamiento = "ASC";
+					}
+					else if(d3v3.select(this).property("value").toUpperCase() === "DESCENDENTE"){
+						ordenamiento = "DES";	
+					}
+					updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
+					
+				});
+									
+
+				//-------------------------------------------COMBO años------------------------------------------------------------
+
+
+
 				// add the options to the button
 				d3v3.select("#selectButton")
 				.selectAll('myOptions')
@@ -366,7 +569,7 @@
 				.enter()
 					.append('option')
 				.text(function (d) { return d; }) // text showed in the menu
-				.attr("value", function (d) { return d; }) // corresponding value returned
+				.attr("value", function (d) { return d; });
 
 				d3v3.select("#selectButton").on("change", function(d) {
 				// recover the option that has been chosen
@@ -376,7 +579,67 @@
 				updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
 
 				
+				var arrayMap = mapLayer.selectAll('path');
+				arrayMap.style("fill",function(d){
+						return fillFn(d);
+
+				});
+				
     			});
+				//-------------------------------------------COMBO de hora------------------------------------------------------------
+				
+				d3v3.select("#selectButtonHora")
+				.selectAll('myOptions')
+					.data(allHoras)
+				.enter()
+					.append('option')
+				.text(function (d) { return d; }) // text showed in the menu
+				.attr("value", function (d) { return d; });
+
+				d3v3.select("#selectButtonHora").on("change", function(d) {
+					selectedHora = d3v3.select(this).property("value")
+				
+					var arrayMap = mapLayer.selectAll('path');
+					arrayMap.style("fill",function(d){
+							return fillFn(d);
+	
+					});
+
+				
+    			});
+				
+
+				//-------------------------------------------Zonas------------------------------------------------------------
+				d3v3.select("#selectButtonZonas")
+				.selectAll('myOptions')
+					.data(allGroupZonas)
+				.enter()
+					.append('option')
+				.text(function (d) { return d; }) // text showed in the menu
+				.attr("value", function (d) { return d; }) // corresponding value returned
+
+				d3v3.select("#selectButtonZonas").style( 'color', color_clicked_province);
+
+				d3v3.select("#selectButtonZonas").on("change", function(d) {
+					var zona = d3v3.select(this).property("value");
+
+					var resultado = zona.split("-")[0];
+					resultado = resultado.replace("UPZ ", "a").replace(" ","");
+					
+					getElementAreaByUPZNameComboBoxZonas(resultado)
+					
+				});
+
+				function changeComboBoxZonasValue(d){
+					
+					for (var i = 0 ; i<allGroupZonas.length; i++){
+						if(allGroupZonas[i].includes(d.properties.UPlCodigo.replace("UPZ","UPZ "))){
+							d3v3.select("#selectButtonZonas")
+							.property("value",allGroupZonas[i]);
+						}
+					}
+				}
+
 
 				//-------------------------------------------SLIDER------------------------------------------------------------
 				// when the input range changes update the circle 
@@ -401,10 +664,7 @@
 					}
 				}
 
-				//------------------------------------------------------------------------------------------------------------
-
-
-
+				//-----------------------MAPA-------------------------------------------------------------------------------------
 
 
 
@@ -412,7 +672,8 @@
 				function(err, mapData) { 
 					
 					var features = mapData.features;
-					elementSelected = features[0];
+
+					elementSelected = features[Math.floor((Math.random() * (features.length-1)) + 1)];
 				
 					// Update color scale domain based on data
 					colorMap.domain([0, d3v3.max(features, nameLength)]);
@@ -462,7 +723,7 @@
 						// Highlight hovered province
 						dummyTextMap.style('opacity', 0);
 						dummyText2Map.style('opacity', 0);
-						d3v3.select(this).style('fill', 'white');
+						d3v3.select(this).style('fill', getColorofZone(d.properties.UPlCodigo.replace("UPZ","a")));
 					}
 
 					
@@ -471,9 +732,11 @@
 
 				// When clicked, zoom in
 				function clickedMap(d) {
+					changeComboBoxZonasValue(d)
 
-					if(d === elementSelected){
+					if(d === elementSelected && isElementSelected){
 						isElementSelected = false;
+						elementSelected = null;
 						dummyTextMap_selected.style('opacity', 0);
 					}
 					else {
@@ -484,34 +747,11 @@
 						textArtSelected(nameFn(d),upzFn(d));
 					}
 
-					var x, y, k;
-
-					// Compute centroid of the selected path
-					if (d && centeredMap !== d) {
-						var centroid = pathMap.centroid(d);
-						x = centroid[0];
-						y = centroid[1];
-						k = 4;
-						centeredMap = d;
-					} else {
-						x = widthMap / 2;
-						y = heightMap / 2;
-						k = 1;
-						centeredMap = null;
-					}
-
-					// Highlight the clicked province
 					mapLayer.selectAll('path')
-						.style('fill', function(d){return centeredMap && d===centeredMap ? color_clicked_province : fillFn(d);});
+						.style('fill', function(d){return fillFn(d);});
 
-						/*
-					// Zoom
-					gMap.transition()
-						.duration(750)
-						.attr('transform', 'translate(' + widthMap / 2 + ',' + heightMap / 2 + ')scale(' + k + ')translate(' + -x + ',' + -y + ')');
 
-						*/
-						updateCharts(selectedAnio.replace("año ",""),(d.properties.UPlCodigo).replace("UPZ","a"),topselected);
+					updateCharts(selectedAnio.replace("año ",""),(d.properties.UPlCodigo).replace("UPZ","a"),topselected);
 				}
 
 
@@ -526,6 +766,30 @@
 						}
 						else {
 							return fillFn(d);
+						}
+					});
+					
+				}
+
+				function fillAreaWithLineColor(upz,color){
+					
+					upz = upz.replace("a","UPZ");
+					var arrayMap = mapLayer.selectAll('path');
+					arrayMap.style("fill",function(d){
+							return fillFn(d);
+	
+					});
+				}
+
+				function getElementAreaByUPZNameComboBoxZonas(upz){
+					upz = upz.replace("a","UPZ");
+					var arrayMap = mapLayer.selectAll('path');
+					arrayMap.style("",function(d){
+						if(d.properties.UPlCodigo === upz){
+							clickedMap(d);
+						}
+						else {
+							//return fillFn(d);
 						}
 					});
 					
@@ -546,12 +810,68 @@
 					dummyTextMap_selected.html(textAux );
 				}
 
+				
+				function textArtSelectedLine(text1, color){
+					dummyTextMap_destination_line.html(text1 ).style('fill', color);
+				}
+
 				// Get province color
 				function fillFn(d){
-					if(d.properties.UPlCodigo === elementSelected.properties.UPlCodigo){
-						return color_clicked_province;
+					
+					if(elementSelected != null){
+						if(d.properties.UPlCodigo === elementSelected.properties.UPlCodigo){
+							return color_clicked_province;
+						}
+						//return color(nameLength(d));
 					}
-					//return color(nameLength(d));
+
+					if(barSelected != null){
+					 	if(d.properties.UPlCodigo === barSelected.rows.replace("a","UPZ")){
+							return color_selected_destination;
+						}
+					}
+
+					if(lineSelected != null){
+						if(d.properties.UPlCodigo === lineSelected.id.replace("a","UPZ")){
+							
+							return colorLin(lineSelected.id);
+						}
+					}
+
+					return getColorofZone(d.properties.UPlCodigo.replace("UPZ","a"));
+					
+
+				}
+
+				function getColorofZone(zona){
+					var colorTotalScale;
+					if(selectedHora == "hora pico"){
+						colorTotalScale = d3v6.scaleQuantize([0, maxHoraPico], d3v6.schemeGreens[5]);
+					}
+					else{
+						colorTotalScale = d3v6.scaleQuantize([0, maxHoraValle], d3v6.schemeGreens[5]);
+					}
+
+					return colorTotalScale(getTotalValueofZone(zona,selectedHora));
+
+
+				}
+
+				function getTotalValueofZone(zona,hora){
+					
+					for(var i = 0 ; i<misDatosMapEqualIJ.length;i++){
+						if(misDatosMapEqualIJ[i]["anio"] == selectedAnio.replace("año ","") && misDatosMapEqualIJ[i]["zona"] == zona ){
+							if(hora == "hola valle"){
+								return misDatosMapEqualIJ[i]["horavalle"];
+							}
+							else {
+								return misDatosMapEqualIJ[i]["horapico"];
+							}
+							
+							
+						}
+					}
+					
 				}
 
 				function updateCharts(anio,upz,cantidad){
@@ -589,22 +909,46 @@
 					//.range(["#d73027","#f46d43","#fdae61","#a6d96a","#66bd63","#1a9850"]);
 					.range([color_co2_tm_opeak,color_co2_tpc_opeak,color_co2_car_opeak,color_comodin]);
 
-				function compareItems1(a, b) {
-					if (a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak < b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak) return 1;
-					if (b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak < a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak) return -1;
-					return 0;
+				function compareItemsOPeak(a, b) {
+
+					if(ordenamiento === "DES"){
+						if (a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak < b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak) return 1;
+						if (b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak < a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak) return -1;
+						return 0;
+					}
+					else if (ordenamiento === "ASC"){
+						if (a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak > b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak) return 1;
+						if (b.co2_car_opeak + b.co2_tm_opeak + b.co2_tpc_opeak > a.co2_car_opeak + a.co2_tm_opeak + a.co2_tpc_opeak) return -1;
+						return 0;
+					}
+
+
+					
 				}
 
-				function compareItems2(a, b) {
-					if (a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak < b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak) return 1;
-					if (b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak < a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak) return -1;
-					return 0;
+				function compareItemsPeak(a, b) {
+					if(ordenamiento === "DES"){
+						if (a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak < b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak) return 1;
+						if (b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak < a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak) return -1;
+						return 0;
+					}
+
+					else if (ordenamiento === "ASC"){
+						if (a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak > b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak) return 1;
+						if (b.co2_tm_peak + b.co2_car_peak + b.co2_tpc_peak > a.co2_tm_peak + a.co2_car_peak + a.co2_tpc_peak) return -1;
+						return 0;
+					}
+
+					
 				}
 
 
 				var misDatos = [];
 				var misDatosLinePeak = [];
 				var misDatosLineOPeak = [];
+				var misDatosMapEqualIJ = [];
+				var maxHoraPico = 0;
+				var maxHoraValle = 0;
 
 				function readDataBarChart(){
 					axios.get(url_data).then((response) => {
@@ -623,9 +967,27 @@
 							datonuevo["co2_tpc_opeak"] = response.data[i].co2_tpc_opeak;
 							datonuevo["anio"] = response.data[i].anio;						
 							misDatos.push(datonuevo);
+
+							if (response.data[i].zi === response.data[i].zj){
+								var datonuevoIgualZona = {};
+								datonuevoIgualZona["zona"]=response.data[i].zi;
+								datonuevoIgualZona["horapico"]=response.data[i].co2_tm_peak+response.data[i].co2_car_peak+response.data[i].co2_tpc_peak;
+								datonuevoIgualZona["horavalle"]=response.data[i].co2_tm_opeak+response.data[i].co2_car_opeak+response.data[i].co2_tpc_opeak;
+								datonuevoIgualZona["anio"] = response.data[i].anio;
+								misDatosMapEqualIJ.push(datonuevoIgualZona);
+								
+								if(selectedAnio == response.data[i].anio && datonuevoIgualZona["horapico"] > maxHoraPico){
+									maxHoraPico = datonuevoIgualZona["horapico"];
+								}
+
+								if(selectedAnio == response.data[i].anio && datonuevoIgualZona["horavalle"] > maxHoraValle){
+									
+									maxHoraValle = datonuevoIgualZona["horavalle"];
+								}
+							}
+
 						//}
 					}
-
 					clickedMap(elementSelected)				
 					})					
 				}
@@ -936,11 +1298,11 @@
 								
 						}
 					}
-					datos1 = datos1.sort(compareItems1);
+					datos1 = datos1.sort(compareItemsOPeak);
 					datos1 = datos1.slice(0,top);
 					generateviz1(datos1);
 
-					datos2 = datos2.sort(compareItems2);	
+					datos2 = datos2.sort(compareItemsPeak);	
 					datos2 = datos2.slice(0,top);				
 					generateviz2(datos2);
 
@@ -1094,12 +1456,12 @@
 						
 						var d = d3v3.select(this).data()[0];
 						if(barSelected != null){
-							rows1.selectAll("rect").style('opacity', function(d2){return '1'});
-							rows2.selectAll("rect").style('opacity', function(d2){return '1'});
+							rows1.selectAll("rect").style('outline','thin solid white').style('opacity', function(d2){return '1'});
+							rows2.selectAll("rect").style('outline','thin solid white').style('opacity', function(d2){return '1'});
 						}
 						barSelected = d3v3.select(this).data()[0];
 						getElementAreaByUPZName(d.rows);
-						d3v3.select(this).selectAll('rect').style('opacity', '0.5');
+						d3v3.select(this).selectAll('rect').style('outline','thin solid ' + color_selected_destination).style('outline-width', '3px').style('opacity', '0.5');
 					}
 					
 				}
@@ -1173,6 +1535,7 @@
 						.attr("dy", ".35em")
 						.style("text-anchor", "begin")
 						.text(function(d) { return d; });
+						
 				};
 
 
@@ -1257,13 +1620,13 @@
 						
 						var d = d3v3.select(this).data()[0];
 						if(barSelected != null){
-							rows2.selectAll("rect").style('opacity', function(d2){return '1'});
-							rows1.selectAll("rect").style('opacity', function(d2){return '1'});
+							rows2.selectAll("rect").style('outline','thin solid white').style('opacity', function(d2){return '1'});
+							rows1.selectAll("rect").style('outline','thin solid white').style('opacity', function(d2){return '1'});
 							
 						}
 						barSelected = d3v3.select(this).data()[0];
 						getElementAreaByUPZName(d.rows);
-						d3v3.select(this).selectAll('rect').style('opacity', '0.5');
+						d3v3.select(this).selectAll('rect').style('outline','thin solid ' + color_selected_destination).style('outline-width', '3px').style('opacity', '0.5');
 					}
 				}
 
@@ -1342,16 +1705,31 @@
 
 				//-----------------------------------------------------------------------------------------------------------------------------------
 				//GRAFICOS DE LINEAS
-				
-
-
 				var marginLin = {top: 30, right: 60, bottom: 50, left: 60};
 				var widthLin = 960/2 - marginLin.left - marginLin.right;
 				var heightLin = 500 - marginLin.top - marginLin.bottom;
 				
 				var colorLin = d3v4.scaleOrdinal(d3v4.schemeCategory10);
+				//var colorLin2 = d3v4.scaleOrdinal(d3v4.schemeCategory10);
+
+				var browser1;
+				var browser;
 
 
+				function getTextUpzById(id_zona){
+					
+					for (var i = 0 ; i<allGroupZonas.length; i++){
+						var elemento1 =allGroupZonas[i].split("-")[0].trim();
+						var elemento2 = id_zona.replace("a","UPZ ");
+
+						if(elemento1===elemento2){
+							var splited = allGroupZonas[i].split("-");
+							return (splited[1].trim() + " (" + splited[0].replace(" ","").trim() + ")");	
+						}
+					} 
+					return "NA";
+					
+				}
 
 				var xRangelin = d3v4.scaleTime()
         		.rangeRound([0, widthLin]);
@@ -1409,24 +1787,26 @@
 						.attr("dy", "0.71em")
 						.attr("fill", "#000")
 						.attr("text-anchor", "start")
-						.text("CO2, %");
+						.text("CO2 (Toneladas)");
 
-					var browser = glin1.selectAll(".browsers")
+					browser1 = glin1.selectAll(".browsers")
 						.data(browsers)
 						.enter()
 						.append("g")
 						.attr("class", "browser");
 
-					browser.append("path")
+					browser1.append("path")
 						.style("fill", "none")
 						.attr("class", "line")
 						.attr("d", function(d) { return line(d.values); })
 						.style("stroke", function(d) { return colorLin(d.id); })
+						.style("stroke-width", "2px")
 						.on('mouseover', mouseoverLine)
+						.on('mouseout', mouseOutLine)
 						.on('click', clickLine)
 						;
 						
-					browser.append("text")
+					browser1.append("text")
 						.datum(function(d) { return {id: d.id, value: d.values[0]}; })
 						.attr("transform", function(d) { return "translate(" + xRangelin(d.value.Date) + "," + yRangelin(d.value.co2) + ")"; })
 						.attr("x", 3)
@@ -1435,11 +1815,82 @@
 						.text(function(d) { return d.id; });
 
 
-					function mouseoverLine(d){
-						console.log(d);		
+
+
+					//Agregar puntos a la linea
+					glin1.selectAll("myDots")
+						.data(browsers)
+						.enter()
+							.append('g')
+							.style("fill", function(d){ return colorLin(d.id); })
+							.attr("class", function(d){ return "value"+d.id;})
+						// Second we need to enter in the 'values' part of this group
+						.selectAll("myPoints")
+						.data(function(d){ return d.values })
+						.enter()
+						.append("circle")
+							.attr("cx", function(d) { return xRangelin(d.Date) } )
+							.attr("cy", function(d) { return yRangelin(d.co2) } )
+							.attr("r", 5) 	
+							.attr("stroke", "white")
+							.on('mouseover', mouseoverPoint)
+							.on('mouseout', mouseOutPoint);
+
+					// Define the div for the tooltip de puntos
+					var div = d3v4.select("body").append("div")	
+						.attr("class", "tooltip2")				
+						.style("opacity", 0);
+
+
+
+
+
+
+
+
+					function mouseOutPoint(d){
+						d3v4.select(this).style('r', 5);
+
+						div.transition()		
+							.duration(500)		
+							.style("opacity", 0);	
+					}
+	
+					var formatTime = d3v4.timeFormat("%y")
+					var formatSuffixDecimal2 = d3v4.format(".3s")
+					function mouseoverPoint(d){
+						d3v4.select(this).style('r', 7);
+						div.transition()		
+							.duration(200)		
+							.style("opacity", .9);		
+						div	.html("Año="+formatTime(d.Date) + "<br/>"  +"CO2="+formatSuffixDecimal2(d.co2) )
+							.style("left", (d3v4.event.pageX) + "px")		
+							.style("top", (d3v4.event.pageY - 28) + "px");
 					}
 
+
+					function mouseoverLine(d){
+						if(d !== lineSelected){
+							d3v4.select(this).style("stroke-width", "5px").style('border','5px solid red');
+						}
+						
+
+						
+						
+					}
+
+					function mouseOutLine(d){
+						if(d !== lineSelected ){
+							d3v4.select(this).style("stroke-width", "2px");
+						}
+					}
+
+
+
+
+
 					function clickLine(d){
+						//ELIMINA LA LINEA AL PRESIONAR CNTROL+CLICK
 						if (d3v4.event.ctrlKey) {
 							for(var i = 0; i<data.length; i++){
 								delete data[i][d.id];
@@ -1449,6 +1900,33 @@
 								data["columns"].splice(index, 1);
 							}
 							generatevizLin1(data);
+
+							if(d === lineSelected){
+								isLineSelected = false;
+								lineSelected = null;
+								d3v4.select(this).style("stroke-width", "2px");
+								dummyTextMap_destination_line.style('opacity', 0);
+								fillAreaWithLineColor("NA",colorLin(d.id))
+							}
+						}
+						else {
+							if(d === lineSelected && isLineSelected){
+								isLineSelected = false;
+								lineSelected = null;
+								d3v4.select(this).style("stroke-width", "2px");
+								dummyTextMap_destination_line.style('opacity', 0);
+								fillAreaWithLineColor("NA",colorLin(d.id))
+							}
+							else{
+								browser1.selectAll(".line").style('stroke-width', function(d){return "2px"})
+								browser.selectAll(".line").style('stroke-width', function(d){return "2px"})
+								lineSelected = d;
+								isLineSelected = true;
+								d3v4.select(this).style("stroke-width", "10px");
+								dummyTextMap_destination_line.style('opacity', 1);
+								textArtSelectedLine(getTextUpzById(d.id),colorLin(d.id));
+								fillAreaWithLineColor(d.id,colorLin(d.id))
+							}
 						}
 						
 					}
@@ -1482,7 +1960,7 @@
 						d3v4.max(browsers, function(c) { return d3v4.max(c.values, function(d) { return d.co2; }); })
 					]);
 
-					colorLin.domain(browsers.map(function(c) { return c.id; }));
+					//colorLin2.domain(browsers.map(function(c) { return c.id; }));
 
 					glin1.append("g")
 						.attr("class", "axis")
@@ -1500,9 +1978,9 @@
 						.attr("dy", "0.71em")
 						.attr("fill", "#000")
 						.attr("text-anchor", "start")
-						.text("CO2, %");
+						.text("CO2 (Toneladas)");
 
-					var browser = glin1.selectAll(".browsers")
+					browser = glin1.selectAll(".browsers")
 						.data(browsers)
 						.enter()
 						.append("g")
@@ -1513,9 +1991,11 @@
 						.attr("class", "line")
 						.attr("d", function(d) { return line(d.values); })
 						.style("stroke", function(d) { return colorLin(d.id); })
-						.on('mouseover', mouseoverLine)
-						.on('click', clickLine);
-						
+						.style("stroke-width", "2px")
+						.on('mouseover', mouseoverLine2)
+						.on('mouseout', mouseOutLine2)
+						.on('click', clickLine2)
+						;
 					browser.append("text")
 						.datum(function(d) { return {id: d.id, value: d.values[0]}; })
 						.attr("transform", function(d) { return "translate(" + xRangelin(d.value.Date) + "," + yRangelin(d.value.co2) + ")"; })
@@ -1524,23 +2004,111 @@
 						.style("font", "10px sans-serif")
 						.text(function(d) { return d.id; });
 
+					//Agregar puntos a la linea
+					glin1.selectAll("myDots")
+						.data(browsers)
+						.enter()
+							.append('g')
+							.style("fill", function(d){ return colorLin(d.id); })
+							.attr("class", function(d){ return "value"+d.id;})
+						// Second we need to enter in the 'values' part of this group
+						.selectAll("myPoints")
+						.data(function(d){ return d.values })
+						.enter()
+						.append("circle")
+							.attr("cx", function(d) { return xRangelin(d.Date) } )
+							.attr("cy", function(d) { return yRangelin(d.co2) } )
+							.attr("r", 5) 	
+							.attr("stroke", "white")
+							.on('mouseover', mouseoverPoint2)
+							.on('mouseout', mouseOutPoint2);
+
+
+					// Define the div for the tooltip de puntos
+					var div = d3v4.select("body").append("div")	
+						.attr("class", "tooltip2")				
+						.style("opacity", 0);
+
 					
-					function mouseoverLine(d){
-						console.log(d);		
+					function mouseOutPoint2(d){
+						d3v4.select(this).style('r', 5);
+
+						div.transition()		
+							.duration(500)		
+							.style("opacity", 0);	
+					}
+	
+					var formatTime = d3v4.timeFormat("%y")
+					var formatSuffixDecimal2 = d3v4.format(".3s")
+					function mouseoverPoint2(d){
+						d3v4.select(this).style('r', 7);
+						div.transition()		
+							.duration(200)		
+							.style("opacity", .9);		
+						div	.html("Año="+formatTime(d.Date) + "<br/>"  +"CO2="+formatSuffixDecimal2(d.co2) )
+							.style("left", (d3v4.event.pageX) + "px")		
+							.style("top", (d3v4.event.pageY - 28) + "px");
 					}
 
-					function clickLine(d){
 
+					function mouseoverLine2(d){
+						if(d !== lineSelected){
+							d3v4.select(this).style("stroke-width", "5px").style('border','5px solid red');
+						}
+						
+
+						
+						
+					}
+
+					function mouseOutLine2(d){
+						if(d !== lineSelected ){
+							d3v4.select(this).style("stroke-width", "2px");
+						}
+					}
+
+
+
+
+
+					function clickLine2(d){
+						//ELIMINA LA LINEA AL PRESIONAR CNTROL+CLICK
 						if (d3v4.event.ctrlKey) {
 							for(var i = 0; i<data.length; i++){
 								delete data[i][d.id];
 							}
-
 							const index = data["columns"].indexOf(d.id);
 							if (index > -1) {
 								data["columns"].splice(index, 1);
 							}
 							generatevizLin2(data);
+
+							if(d === lineSelected){
+								isLineSelected = false;
+								lineSelected = null;
+								d3v4.select(this).style("stroke-width", "2px");
+								dummyTextMap_destination_line.style('opacity', 0);
+								fillAreaWithLineColor("NA",colorLin2(d.id))
+							}
+						}
+						else {
+							if(d === lineSelected && isLineSelected){
+								isLineSelected = false;
+								lineSelected = null;
+								d3v4.select(this).style("stroke-width", "2px");
+								dummyTextMap_destination_line.style('opacity', 0);
+								fillAreaWithLineColor("NA",colorLin2(d.id))
+							}
+							else{
+								browser1.selectAll(".line").style('stroke-width', function(d){return "2px"})
+								browser.selectAll(".line").style('stroke-width', function(d){return "2px"})
+								lineSelected = d;
+								isLineSelected = true;
+								d3v4.select(this).style("stroke-width", "10px");
+								dummyTextMap_destination_line.style('opacity', 1);
+								textArtSelectedLine(getTextUpzById(d.id),colorLin(d.id));
+								fillAreaWithLineColor(d.id,colorLin(d.id))
+							}
 						}
 						
 					}
@@ -1574,6 +2142,7 @@
 	<footer class="ftco-footer ftco-section">
 		<div class="degree-footer-top"></div>
 		<div class="container">
+			<!--
 			<div class="row mb-5">
 				<div class="col-md">
 					<div class="ftco-footer-widget mb-4">
@@ -1631,6 +2200,7 @@
 					</div>
 				</div>
 			</div>
+			-->
 			<div class="row">
 				<div class="col-md-12 text-center">
 					
