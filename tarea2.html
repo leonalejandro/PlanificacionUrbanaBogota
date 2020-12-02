@@ -304,6 +304,7 @@
 				var url_dataLineOPeak = prefix+"/Data/Co2_LineChart_TotalOPeak.json";
 				var urlMap = prefix+"/Data/zonas_luti.json";
 				var url_data_test = prefix+"/Data/browser_statistics.csv"
+				var url_data_averageZones = prefix+"/Data/AverageZones.json"
 
 				//-----------------------------------------------------------------------------------------------------------------------------------
 				//MAPA
@@ -323,12 +324,12 @@
 				var selectedHora = "hora pico";
 
 				//COLORES A USAR EN TODA LA VISUALIZACION
-				var color_co2_tm_opeak = "#a6d96a";
-				var color_co2_tpc_opeak = "#66bd63";
-				var color_co2_car_opeak = "#1a9850";
-				var color_co2_tm_peak = "#a6d96a";
-				var color_co2_tpc_peak = "#66bd63";
-				var color_co2_car_peak = "#1a9850";
+				var color_co2_tm_opeak = "#FFB81C";
+				var color_co2_tpc_opeak = "#BA800C";
+				var color_co2_car_opeak = "#8C5A02";
+				var color_co2_tm_peak = "#FFB81C";
+				var color_co2_tpc_peak = "#BA800C";
+				var color_co2_car_peak = "#8C5A02";
 				var color_comodin = "#FFFFFF"; //Debido a que hay categorias impares
 				
 
@@ -572,12 +573,18 @@
 				.attr("value", function (d) { return d; });
 
 				d3v3.select("#selectButton").on("change", function(d) {
+				
 				// recover the option that has been chosen
 				selectedAnio = d3v3.select(this).property("value")
 				// run the updateChart function with this selected option
 				
-				updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
+				updateMaxMinValuesAverageZones()
 
+				if(elementSelected!=null){
+					updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
+
+				}
+				
 				
 				var arrayMap = mapLayer.selectAll('path');
 				arrayMap.style("fill",function(d){
@@ -707,7 +714,12 @@
 				}
 
 				function mouseoverMap(d){
-					if(d!=elementSelected){
+					currentValue = d.properties.UPlCodigo;
+					valueSelected = (elementSelected != null) ?elementSelected.properties.UPlCodigo:"NA";
+					lineValueSelected = (lineSelected != null) ?lineSelected.id.replace("a","UPZ"):"NA";
+					barValueSelected = (barSelected != null) ?barSelected.rows.replace("a","UPZ"):"NA";
+
+					if(currentValue != valueSelected && currentValue != lineValueSelected && currentValue != barValueSelected){
 						// Highlight hovered province
 						d3v3.select(this).style('fill', color_on_selection);
 						dummyTextMap.style('opacity', 1);
@@ -719,7 +731,12 @@
 				}
 
 				function mouseoutMap(d){
-					if (d != elementSelected){
+					currentValue = d.properties.UPlCodigo;
+					valueSelected = (elementSelected != null) ?elementSelected.properties.UPlCodigo:"NA";
+					lineValueSelected = (lineSelected != null) ?lineSelected.id.replace("a","UPZ"):"NA";
+					barValueSelected = (barSelected != null) ?barSelected.rows.replace("a","UPZ"):"NA";
+
+					if (currentValue != valueSelected && currentValue != lineValueSelected && currentValue != barValueSelected){
 						// Highlight hovered province
 						dummyTextMap.style('opacity', 0);
 						dummyText2Map.style('opacity', 0);
@@ -950,6 +967,47 @@
 				var maxHoraPico = 0;
 				var maxHoraValle = 0;
 
+				function updateMaxMinValuesAverageZones(){
+					maxHoraPico = 0
+					maxHoraValle = 0
+
+
+
+					for (var i = 0; i < misDatosMapEqualIJ.length; i++) {
+						if(selectedAnio.replace("año ","") == misDatosMapEqualIJ[i]["anio"] && misDatosMapEqualIJ[i]["horapico"] > maxHoraPico){
+							maxHoraPico = misDatosMapEqualIJ[i]["horapico"];
+						}
+
+						if(selectedAnio.replace("año ","") == misDatosMapEqualIJ[i]["anio"] && misDatosMapEqualIJ[i]["horavalle"] > maxHoraValle){						
+							maxHoraValle = misDatosMapEqualIJ[i]["horavalle"];
+						}
+					}
+				}
+
+				function readAverageZones(){
+					axios.get(url_data_averageZones).then((response) => {
+						for (var i = 0; i < response.data.length; i++) {
+							var datonuevoIgualZona = {};
+							datonuevoIgualZona["zona"]=response.data[i].zona;
+							datonuevoIgualZona["horapico"]=response.data[i].peak;
+							datonuevoIgualZona["horavalle"]=response.data[i].Opeak;
+							datonuevoIgualZona["anio"] = response.data[i].anio;
+							misDatosMapEqualIJ.push(datonuevoIgualZona);
+
+							if(selectedAnio == response.data[i].anio && datonuevoIgualZona["horapico"] > maxHoraPico){
+								maxHoraPico = datonuevoIgualZona["horapico"];
+							}
+
+							if(selectedAnio == response.data[i].anio && datonuevoIgualZona["horavalle"] > maxHoraValle){
+								
+								maxHoraValle = datonuevoIgualZona["horavalle"];
+							}
+						}
+					
+					})
+				}
+
+
 				function readDataBarChart(){
 					axios.get(url_data).then((response) => {
 					cont = 0;
@@ -968,6 +1026,7 @@
 							datonuevo["anio"] = response.data[i].anio;						
 							misDatos.push(datonuevo);
 
+							/*
 							if (response.data[i].zi === response.data[i].zj){
 								var datonuevoIgualZona = {};
 								datonuevoIgualZona["zona"]=response.data[i].zi;
@@ -985,7 +1044,7 @@
 									maxHoraValle = datonuevoIgualZona["horavalle"];
 								}
 							}
-
+							*/
 						//}
 					}
 					clickedMap(elementSelected)				
@@ -2119,6 +2178,7 @@
 
 				//-----------------------------------------------------------------------------------------------------------------------------------
 				//Se leen los datos y se hace la visualizacion inicial 
+				readAverageZones()
 				readDataLineChart()
 				readDataBarChart()
 				
