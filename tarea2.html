@@ -298,7 +298,7 @@
 
 
 			<script>
-				var prefix = "/PlanificacionUrbanaBogota";
+				var prefix = "";
 				var url_data = prefix+"/Data/Co2_Emissions.json";
 				var url_dataLinePeak = prefix+"/Data/Co2_LineChart_TotalPeak.json";
 				var url_dataLineOPeak = prefix+"/Data/Co2_LineChart_TotalOPeak.json";
@@ -316,7 +316,6 @@
 				var isElementSelected = false;
 				var lineSelected;
 				var elementSelected;
-				var cantElements = 10;
 				var selectedAnio = "0";
 				var topselected = "10";
 				var barSelected;
@@ -554,7 +553,7 @@
 					else if(d3v3.select(this).property("value").toUpperCase() === "DESCENDENTE"){
 						ordenamiento = "DES";	
 					}
-					updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
+					updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),topselected)
 					
 				});
 									
@@ -581,7 +580,7 @@
 				updateMaxMinValuesAverageZones()
 
 				if(elementSelected!=null){
-					updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),cantElements)
+					updateCharts(selectedAnio.replace("año ",""),(elementSelected.properties.UPlCodigo).replace("UPZ","a"),topselected)
 
 				}
 				
@@ -915,6 +914,15 @@
 				var xAxis = d3v3.svg.axis()
 					.scale(x)
 					.tickFormat(Math.abs)
+					.tickFormat(function(d){
+						if(Math.abs(d) > 0  && Math.abs(d) < 1){
+							return d3v3.format(".1e")(Math.abs(d))
+						}
+						else{
+							return (Math.abs(d))
+						}
+
+					})
 					.orient("top");
 				
 				var yAxis = d3v3.svg.axis()
