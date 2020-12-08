@@ -1,227 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>Avo - Free Bootstrap 4 Template by Colorlib</title>
+  <title>Tarea 3</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
-  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900&display=swap"
+    rel="stylesheet">
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <link rel="stylesheet" href="css/animate.css">
-  
+
   <link rel="stylesheet" href="css/owl.carousel.min.css">
   <link rel="stylesheet" href="css/owl.theme.default.min.css">
   <link rel="stylesheet" href="css/magnific-popup.css">
-  
+
   <link rel="stylesheet" href="css/flaticon.css">
   <link rel="stylesheet" href="css/style.css">
 
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<!-- Load d3.js -->
-<script src="https://d3js.org/d3.v4.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
-<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<script src="/PlanificacionUrbanaBogota/js/tarea3_0.js"></script> <!--NO ME SIRVE-->
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script>
+    var d3v3 = window.d3;
+    window.d3 = null;
+  </script>
 
-  
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+
+  <script src="https://d3js.org/topojson.v2.min.js"></script>
+
 
 </head>
+
 <body>
-  
- <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-   <div class="container">
-     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-       <span class="oi oi-menu"></span> Menu
-     </button>
 
-     <div class="collapse navbar-collapse" id="ftco-nav">
-       <ul class="navbar-nav ml-auto">
-         <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
-         <li class="nav-item"><a href="tarea1.html" class="nav-link">Tarea 1</a></li>
-         <li class="nav-item"><a href="tarea2.html" class="nav-link">Tarea 2</a></li>
-         <li class="nav-item active"><a href="tarea3.html" class="nav-link">Tarea 3</a></li>
-       </ul>
-     </div>
-   </div>
- </nav>
- <!-- END nav -->
+  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+        aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="oi oi-menu"></span> Menu
+      </button>
 
- <section class="hero-wrap hero-wrap-2 degree-right" style="background-image: url('images/bg_5.jpg');" data-stellar-background-ratio="0.5">
-  <div class="overlay"></div>
-  <div class="container">
-    <div class="row no-gutters slider-text js-fullheight align-items-end">
-      <div class="col-md-9 ftco-animate pb-5 mb-5">
-       <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i class="fa fa-chevron-right"></i></a></span> <span>Tarea 3 <i class="fa fa-chevron-right"></i></span></p>
-       <h1 class="mb-3 bread">Tarea 3</h1>
-     </div>
-   </div>
- </div>
-</section>
-
-
-
-
-
-
-
-
-<section class="ftco-section">
-  <div class="container">
-
-
-    <div class="row justify-content-center no-gutters">
-			<div class="col-md-12 heading-section text-center ftco-animate mb-5">
-				<h2 class="mb-2">Tarea 3</h2>
-			</div>
-		</div>
-
-
-
-    <select id="selectButton"></select>
-    <!-- Create a div where the graph will take place -->
-    <div id="my_dataviz"></div>
-
-    <script>
-      // set the dimensions and margins of the graph
-      var margin = {top: 10, right: 100, bottom: 30, left: 30},
-          width = 460 - margin.left - margin.right,
-          height = 400 - margin.top - margin.bottom;
-      
-      // append the svg object to the body of the page
-      var svg = d3.select("#my_dataviz")
-        .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-          .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-      
-      //Read the data
-      d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_connectedscatter.csv", function(data) {
-      
-          // List of groups (here I have one group per column)
-          var allGroup = ["valueA", "valueB", "valueC"]
-      
-          // add the options to the button
-          d3.select("#selectButton")
-            .selectAll('myOptions')
-             .data(allGroup)
-            .enter()
-            .append('option')
-            .text(function (d) { return d; }) // text showed in the menu
-            .attr("value", function (d) { return d; }) // corresponding value returned by the button
-      
-          // Add X axis --> it is a date format
-          var x = d3.scaleLinear()
-            .domain([0,10])
-            .range([ 0, width ]);
-          svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
-      
-          // Add Y axis
-          var y = d3.scaleLinear()
-            .domain( [0,20])
-            .range([ height, 0 ]);
-          svg.append("g")
-            .call(d3.axisLeft(y));
-      
-          // Initialize line with group a
-          var line = svg
-            .append('g')
-            .append("path")
-              .datum(data)
-              .attr("d", d3.line()
-                .x(function(d) { return x(+d.time) })
-                .y(function(d) { return y(+d.valueA) })
-              )
-              .attr("stroke", "black")
-              .style("stroke-width", 4)
-              .style("fill", "none")
-      
-          // Initialize dots with group a
-          var dot = svg
-            .selectAll('circle')
-            .data(data)
-            .enter()
-            .append('circle')
-              .attr("cx", function(d) { return x(+d.time) })
-              .attr("cy", function(d) { return y(+d.valueA) })
-              .attr("r", 7)
-              .style("fill", "#69b3a2")
-      
-      
-          // A function that update the chart
-          function update(selectedGroup) {
-      
-            // Create new data with the selection?
-            var dataFilter = data.map(function(d){return {time: d.time, value:d[selectedGroup]} })
-      
-            // Give these new data to update line
-            line
-                .datum(dataFilter)
-                .transition()
-                .duration(1000)
-                .attr("d", d3.line()
-                  .x(function(d) { return x(+d.time) })
-                  .y(function(d) { return y(+d.value) })
-                )
-            dot
-              .data(dataFilter)
-              .transition()
-              .duration(1000)
-                .attr("cx", function(d) { return x(+d.time) })
-                .attr("cy", function(d) { return y(+d.value) })
-          }
-      
-          // When the button is changed, run the updateChart function
-          d3.select("#selectButton").on("change", function(d) {
-              // recover the option that has been chosen
-              var selectedOption = d3.select(this).property("value")
-              // run the updateChart function with this selected option
-              update(selectedOption)
-          })
-      
-      })
-      </script>
-    <div class="row d-flex">
-</div>
-</section>	
-
-<footer class="ftco-footer ftco-section">
- <div class="degree-footer-top"></div>
-</div>
-<div class="row">
-  <div class="col-md-12 text-center">
-   
-    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-      Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-      <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+      <div class="collapse navbar-collapse" id="ftco-nav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="tarea1.html" class="nav-link">Tarea 1</a></li>
+          <li class="nav-item"><a href="tarea2.html" class="nav-link">Tarea 2</a></li>
+          <li class="nav-item active"><a href="tarea3.html" class="nav-link">Tarea 3</a></li>
+        </ul>
+      </div>
     </div>
-  </div>
-</div>
-</footer>
+  </nav>
+  <!-- END nav -->
+
+  <section class="hero-wrap hero-wrap-2 degree-right" style="background-image: url('images/bg_5.jpg');"
+    data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row no-gutters slider-text js-fullheight align-items-end">
+        <div class="col-md-9 ftco-animate pb-5 mb-5">
+          <p class="breadcrumbs"><span class="mr-2"><a href="index.html">Home <i
+                  class="fa fa-chevron-right"></i></a></span> <span>TIEMPO DE DESPLAZAMIENTO ENTRE ZONAS UPZ<i
+                class="fa fa-chevron-right"></i></span></p>
+          <h1 class="mb-3 bread">TIEMPO DE DESPLAZAMIENTO ENTRE ZONAS UPZ</h1>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ftco-section">
+    <div class="container">
+      <div class="row justify-content no-gutters">
+        <div class="col-md-12 heading-section text-center ftco-animate mb-5">
+          <h2 class="mb-2">VELOCIDAD DE DESPLAZAMIENTO ENTRE ZONAS UPZ</h2>
+        </div>
+      </div>
+
+      <div width=100%>
+				<div class="text text-md-left">
+					<p style="font-size:20px">La visualización se enfoca en representar la velocidad de desplazamiento entre las zonas UPZ de Bogotá,  por medio de una matriz donde el color de cada casilla indica la magnitud de la velocidad entre las zonas que se intersectan en esta, se resalta en tonos rojos las zonas de menor velocidad. </p>
+          <p style="font-size:20px">Inicialmente se representa una visión general de todas las zonas para el medio de transporte vehículo particular, por medio de los filtros se pueden seleccionar las zonas de interés y cambiar el medio de trasporte. Por otra parte la visualización permite generar comparaciones entre años, horas pico y no pico y medios de transporte. Para esto se deben seleccionar los campos que se desean comparar y la visualización se reagrupa de acuerdo a esto. </p>
+        </div>
+			</div>
+      <br />
+      <br />
+      <style>
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300|Josefin+Slab|Arvo|Lato|Vollkorn|Abril+Fatface|Old+Standard+TT|Droid+Sans|Lobster|Inconsolata|Montserrat|Playfair+Display|Karla|Alegreya|Libre+Baskerville|Merriweather|Lora|Archivo+Narrow|Neuton|Signika|Questrial|Fjalla+One|Bitter|Varela+Round);
+
+        .background {
+          fill: #eee;
+          pointer-events: all;
+        }
+
+        .map-layer {
+          fill: #fff;
+          stroke: #aaa;
+        }
+
+        .effect-layer {
+          pointer-events: none;
+        }
+
+        text {
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          font-weight: 300;
+        }
+
+        text.big-text {
+          font-size: 30px;
+          font-weight: 400;
+        }
+
+        .effect-layer text,
+        text.dummy-text {
+          font-size: 12px;
+        }
+      </style>
+
+        <div class='tableauPlaceholder' id='viz1607413187564' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;VA&#47;VAspeed&#47;Velocidad&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='VAspeed&#47;Velocidad' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;VA&#47;VAspeed&#47;Velocidad&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='es' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1607413187564');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+
+  </section>
+
+  <footer class="ftco-footer ftco-section">
+    <div class="degree-footer-top"></div>
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-12 text-center">
+
+          <p>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with
+            <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com"
+              target="_blank">Colorlib</a>
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
 
 
 
-<!-- loader -->
-<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px">
+      <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" />
+      <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+        stroke="#F96D00" /></svg></div>
 
 
-<script src="js/jquery.min.js"></script>
-<script src="js/jquery-migrate-3.0.1.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.easing.1.3.js"></script>
-<script src="js/jquery.waypoints.min.js"></script>
-<script src="js/jquery.stellar.min.js"></script>
-<script src="js/owl.carousel.min.js"></script>
-<script src="js/jquery.magnific-popup.min.js"></script>
-<script src="js/jquery.animateNumber.min.js"></script>
-<script src="js/scrollax.min.js"></script>
-<script src="js/main.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/jquery-migrate-3.0.1.min.js"></script>
+  <script src="js/popper.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/jquery.waypoints.min.js"></script>
+  <script src="js/jquery.stellar.min.js"></script>
+  <script src="js/owl.carousel.min.js"></script>
+  <script src="js/jquery.magnific-popup.min.js"></script>
+  <script src="js/jquery.animateNumber.min.js"></script>
+  <script src="js/scrollax.min.js"></script>
+  <script src="js/main.js"></script>
 
 </body>
+
 </html>
